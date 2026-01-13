@@ -1,0 +1,347 @@
+<div class="flex min-h-screen bg-gray-50">
+  <app-sidebar></app-sidebar>
+  <div class="flex-1 mr-64">
+    <app-topbar></app-topbar>
+
+    <main class="p-6">
+      <!-- Header -->
+      <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">
+          لوحة تحكم الشركة 🏢
+        </h1>
+        <p class="text-gray-600">نظرة عامة على الكتل الزراعية والأداء المالي</p>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex justify-center items-center py-12">
+        <app-loader></app-loader>
+      </div>
+
+      <!-- Dashboard Content -->
+      <div *ngIf="!loading">
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <!-- Total Blocks -->
+          <app-card>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-600 mb-1">إجمالي الكتل الزراعية</p>
+                <p class="text-3xl font-bold text-gray-800">
+                  {{ stats.totalBlocks }}
+                </p>
+                <p class="text-xs text-green-600 mt-1">كتلة نشطة</p>
+              </div>
+              <div
+                class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center"
+              >
+                <span class="text-2xl">🗺️</span>
+              </div>
+            </div>
+          </app-card>
+
+          <!-- Total Area -->
+          <app-card>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-600 mb-1">إجمالي المساحة</p>
+                <p class="text-3xl font-bold text-gray-800">
+                  {{ stats.totalArea }}
+                </p>
+                <p class="text-xs text-gray-500 mt-1">فدان</p>
+              </div>
+              <div
+                class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center"
+              >
+                <span class="text-2xl">📐</span>
+              </div>
+            </div>
+          </app-card>
+
+          <!-- Total Investment -->
+          <app-card>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-600 mb-1">إجمالي الاستثمارات</p>
+                <p class="text-3xl font-bold text-gray-800">
+                  {{ stats.totalInvestment | number : "1.0-0" }}
+                </p>
+                <p class="text-xs text-gray-500 mt-1">جنيه مصري</p>
+              </div>
+              <div
+                class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center"
+              >
+                <span class="text-2xl">💰</span>
+              </div>
+            </div>
+          </app-card>
+
+          <!-- Expected Revenue -->
+          <app-card>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-600 mb-1">العوائد المتوقعة</p>
+                <p class="text-3xl font-bold text-gray-800">
+                  {{ stats.totalRevenue | number : "1.0-0" }}
+                </p>
+                <p class="text-xs text-green-600 mt-1">جنيه مصري</p>
+              </div>
+              <div
+                class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center"
+              >
+                <span class="text-2xl">📈</span>
+              </div>
+            </div>
+          </app-card>
+
+          <!-- Active Contracts -->
+          <app-card>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-600 mb-1">العقود النشطة</p>
+                <p class="text-3xl font-bold text-gray-800">
+                  {{ stats.activeContracts }}
+                </p>
+                <p class="text-xs text-gray-500 mt-1">عقد نشط</p>
+              </div>
+              <div
+                class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center"
+              >
+                <span class="text-2xl">📄</span>
+              </div>
+            </div>
+          </app-card>
+
+          <!-- Average Yield -->
+          <app-card>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-600 mb-1">متوسط الإنتاجية</p>
+                <p class="text-3xl font-bold text-gray-800">
+                  {{ stats.averageYield | number : "1.1-1" }}
+                </p>
+                <p class="text-xs text-gray-500 mt-1">طن/فدان</p>
+              </div>
+              <div
+                class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center"
+              >
+                <span class="text-2xl">🌾</span>
+              </div>
+            </div>
+          </app-card>
+        </div>
+
+        <!-- Recent Blocks -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Blocks Overview -->
+          <app-card>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+              الكتل الزراعية الحديثة
+            </h3>
+
+            <div class="space-y-4">
+              <div
+                *ngFor="let block of recentBlocks"
+                class="p-4 border border-gray-200 rounded-lg hover:shadow-md transition"
+              >
+                <div class="flex justify-between items-start mb-3">
+                  <div>
+                    <h4 class="font-semibold text-gray-800">
+                      {{ block.name }}
+                    </h4>
+                    <p class="text-sm text-gray-600">
+                      {{ block.governorate }} - {{ block.location }}
+                    </p>
+                  </div>
+                  <span
+                    class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium"
+                  >
+                    نشط
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 mb-3">
+                  <div>
+                    <p class="text-xs text-gray-500">المساحة</p>
+                    <p class="font-semibold">{{ block.totalArea }} فدان</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500">الأراضي</p>
+                    <p class="font-semibold">{{ block.landsCount }} أرض</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500">العقود</p>
+                    <p class="font-semibold">{{ block.contractsCount }} عقد</p>
+                  </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="mb-2">
+                  <div class="flex justify-between text-xs text-gray-600 mb-1">
+                    <span>التقدم</span>
+                    <span>{{ block.completionPercentage }}%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      [ngClass]="getProgressColor(block.completionPercentage)"
+                      class="h-2 rounded-full transition-all duration-300"
+                      [style.width.%]="block.completionPercentage"
+                    ></div>
+                  </div>
+                </div>
+
+                <div
+                  class="flex justify-between items-center pt-3 border-t border-gray-100"
+                >
+                  <div>
+                    <p class="text-xs text-gray-500">الاستثمار</p>
+                    <p class="font-semibold text-sm">
+                      {{ block.totalInvestment | number : "1.0-0" }} جنيه
+                    </p>
+                  </div>
+                  <button
+                    class="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                    routerLink="/company/blocks"
+                  >
+                    عرض التفاصيل ←
+                  </button>
+                </div>
+              </div>
+
+              <div
+                *ngIf="recentBlocks.length === 0"
+                class="text-center py-8 text-gray-500"
+              >
+                لا توجد كتل زراعية حالياً
+              </div>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-gray-200">
+              <button
+                routerLink="/company/blocks"
+                class="w-full btn-primary text-center"
+              >
+                عرض جميع الكتل
+              </button>
+            </div>
+          </app-card>
+
+          <!-- Financial Overview -->
+          <app-card>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">نظرة مالية</h3>
+
+            <div class="space-y-4">
+              <!-- ROI -->
+              <div class="p-4 bg-green-50 rounded-lg">
+                <p class="text-sm text-gray-600 mb-1">
+                  العائد على الاستثمار (ROI)
+                </p>
+                <p class="text-2xl font-bold text-green-600">
+                  {{
+                    ((stats.totalRevenue - stats.totalInvestment) /
+                      stats.totalInvestment) *
+                      100 | number : "1.1-1"
+                  }}%
+                </p>
+                <p class="text-xs text-gray-500 mt-1">متوسط العائد المتوقع</p>
+              </div>
+
+              <!-- Revenue Breakdown -->
+              <div>
+                <h4 class="font-semibold text-gray-700 mb-3">توزيع العوائد</h4>
+                <div class="space-y-2">
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">الاستثمارات</span>
+                    <span class="font-semibold"
+                      >{{ stats.totalInvestment | number : "1.0-0" }} جنيه</span
+                    >
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">العوائد المتوقعة</span>
+                    <span class="font-semibold text-green-600"
+                      >{{ stats.totalRevenue | number : "1.0-0" }} جنيه</span
+                    >
+                  </div>
+                  <div
+                    class="flex justify-between items-center pt-2 border-t border-gray-200"
+                  >
+                    <span class="text-sm font-semibold text-gray-700"
+                      >صافي الربح المتوقع</span
+                    >
+                    <span class="font-bold text-green-600">
+                      {{
+                        stats.totalRevenue - stats.totalInvestment
+                          | number : "1.0-0"
+                      }}
+                      جنيه
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Performance Indicators -->
+              <div>
+                <h4 class="font-semibold text-gray-700 mb-3">مؤشرات الأداء</h4>
+                <div class="space-y-3">
+                  <!-- Block Utilization -->
+                  <div>
+                    <div
+                      class="flex justify-between text-xs text-gray-600 mb-1"
+                    >
+                      <span>نسبة استغلال الكتل</span>
+                      <span>85%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        class="bg-blue-500 h-2 rounded-full"
+                        style="width: 85%"
+                      ></div>
+                    </div>
+                  </div>
+
+                  <!-- Contract Success Rate -->
+                  <div>
+                    <div
+                      class="flex justify-between text-xs text-gray-600 mb-1"
+                    >
+                      <span>نسبة نجاح العقود</span>
+                      <span>92%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        class="bg-green-500 h-2 rounded-full"
+                        style="width: 92%"
+                      ></div>
+                    </div>
+                  </div>
+
+                  <!-- Farmer Satisfaction -->
+                  <div>
+                    <div
+                      class="flex justify-between text-xs text-gray-600 mb-1"
+                    >
+                      <span>رضا المزارعين</span>
+                      <span>88%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        class="bg-yellow-500 h-2 rounded-full"
+                        style="width: 88%"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                routerLink="/reports"
+                class="w-full btn-secondary text-center mt-4"
+              >
+                عرض التقارير التفصيلية
+              </button>
+            </div>
+          </app-card>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

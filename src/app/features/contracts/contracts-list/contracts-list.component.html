@@ -1,0 +1,316 @@
+<div class="flex min-h-screen bg-gray-50">
+  <app-sidebar></app-sidebar>
+  <div class="flex-1 mr-64">
+    <app-topbar></app-topbar>
+
+    <main class="p-6">
+      <!-- Header -->
+      <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">العقود 📄</h1>
+        <p class="text-gray-600">إدارة ومتابعة جميع العقود الزراعية</p>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <app-card>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600 mb-1">إجمالي العقود</p>
+              <p class="text-2xl font-bold text-gray-800">{{ stats.total }}</p>
+            </div>
+            <div
+              class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"
+            >
+              <span class="text-xl">📄</span>
+            </div>
+          </div>
+        </app-card>
+
+        <app-card>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600 mb-1">عقود نشطة</p>
+              <p class="text-2xl font-bold text-green-600">
+                {{ stats.active }}
+              </p>
+            </div>
+            <div
+              class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center"
+            >
+              <span class="text-xl">✅</span>
+            </div>
+          </div>
+        </app-card>
+
+        <app-card>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600 mb-1">قيد المراجعة</p>
+              <p class="text-2xl font-bold text-yellow-600">
+                {{ stats.pending }}
+              </p>
+            </div>
+            <div
+              class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center"
+            >
+              <span class="text-xl">⏳</span>
+            </div>
+          </div>
+        </app-card>
+
+        <app-card>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600 mb-1">القيمة الإجمالية</p>
+              <p class="text-lg font-bold text-gray-800">
+                {{ stats.totalValue | number : "1.0-0" }}
+              </p>
+              <p class="text-xs text-gray-500">جنيه مصري</p>
+            </div>
+            <div
+              class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"
+            >
+              <span class="text-xl">💰</span>
+            </div>
+          </div>
+        </app-card>
+      </div>
+
+      <!-- Filters -->
+      <app-card class="mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="label">بحث</label>
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (input)="applyFilters()"
+              placeholder="رقم العقد أو اسم الشركة..."
+              class="input-field"
+            />
+          </div>
+
+          <div>
+            <label class="label">الحالة</label>
+            <select
+              [(ngModel)]="selectedStatus"
+              (change)="applyFilters()"
+              class="input-field"
+            >
+              <option value="">جميع الحالات</option>
+              <option value="نشط">نشط</option>
+              <option value="قيد المراجعة">قيد المراجعة</option>
+              <option value="مكتمل">مكتمل</option>
+              <option value="ملغى">ملغى</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2 flex items-end">
+            <button (click)="clearFilters()" class="btn-secondary w-full">
+              مسح الفلاتر
+            </button>
+          </div>
+        </div>
+      </app-card>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex justify-center items-center py-12">
+        <app-loader></app-loader>
+      </div>
+
+      <!-- Contracts List -->
+      <div *ngIf="!loading" class="space-y-4">
+        <app-card
+          *ngFor="let contract of filteredContracts"
+          class="hover:shadow-lg transition"
+        >
+          <!-- Contract Header -->
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <h3 class="text-xl font-bold text-gray-800">
+                  {{ contract.contractNumber }}
+                </h3>
+                <app-badge [variant]="getStatusColor(contract.status)">
+                  {{ contract.status }}
+                </app-badge>
+              </div>
+              <p class="text-sm text-gray-600 mb-1">
+                🏢 {{ contract.companyName }}
+              </p>
+              <p class="text-sm text-gray-600">🌾 {{ contract.landName }}</p>
+            </div>
+            <button
+              (click)="downloadContract(contract.id)"
+              class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center gap-2"
+            >
+              <span>📥</span>
+              <span>تنزيل PDF</span>
+            </button>
+          </div>
+
+          <!-- Contract Details Grid -->
+          <div
+            class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 pb-4 border-b border-gray-200"
+          >
+            <div>
+              <p class="text-xs text-gray-500 mb-1">تاريخ البداية</p>
+              <p class="font-semibold">
+                {{ contract.startDate | date : "dd/MM/yyyy" }}
+              </p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 mb-1">تاريخ الانتهاء</p>
+              <p class="font-semibold">
+                {{ contract.endDate | date : "dd/MM/yyyy" }}
+              </p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 mb-1">المدة</p>
+              <p class="font-semibold">{{ contract.duration }} شهر</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 mb-1">الأيام المتبقية</p>
+              <p
+                class="font-semibold"
+                [class.text-red-600]="getDaysRemaining(contract.endDate) < 30"
+              >
+                {{ getDaysRemaining(contract.endDate) }} يوم
+              </p>
+            </div>
+          </div>
+
+          <!-- Financial Info -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-gray-500 mb-1">قيمة العقد</p>
+              <p class="font-semibold">
+                {{ contract.totalValue | number : "1.0-0" }} جنيه
+              </p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 mb-1">المدفوع</p>
+              <p class="font-semibold text-green-600">
+                {{ contract.paidAmount | number : "1.0-0" }} جنيه
+              </p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 mb-1">المتبقي</p>
+              <p class="font-semibold text-orange-600">
+                {{ contract.remainingAmount | number : "1.0-0" }} جنيه
+              </p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 mb-1">نسبة السداد</p>
+              <p class="font-semibold">
+                {{
+                  (contract.paidAmount / contract.totalValue) * 100
+                    | number : "1.0-0"
+                }}%
+              </p>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mb-4">
+            <div class="flex justify-between text-sm text-gray-600 mb-2">
+              <span>تقدم العقد</span>
+              <span class="font-semibold"
+                >{{ calculateProgress(contract) }}%</span
+              >
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+              <div
+                class="bg-green-500 h-3 rounded-full transition-all duration-300"
+                [style.width.%]="calculateProgress(contract)"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Payment Schedule -->
+          <div
+            *ngIf="
+              contract.paymentSchedule && contract.paymentSchedule.length > 0
+            "
+            class="mb-4"
+          >
+            <h4 class="text-sm font-semibold text-gray-700 mb-2">
+              جدول الدفعات
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+              <div
+                *ngFor="let payment of contract.paymentSchedule"
+                class="p-2 rounded border"
+                [ngClass]="{
+                     'bg-green-50 border-green-200': payment.isPaid,
+                     'bg-yellow-50 border-yellow-200': !payment.isPaid && new Date(payment.dueDate) > new Date(),
+                     'bg-red-50 border-red-200': !payment.isPaid && new Date(payment.dueDate) <= new Date()
+                   }"
+              >
+                <div class="flex justify-between items-center">
+                  <div>
+                    <p class="text-xs font-semibold">
+                      دفعة {{ payment.installmentNumber }}
+                    </p>
+                    <p class="text-xs text-gray-600">
+                      {{ payment.dueDate | date : "dd/MM/yyyy" }}
+                    </p>
+                  </div>
+                  <div class="text-left">
+                    <p class="text-sm font-semibold">
+                      {{ payment.amount | number : "1.0-0" }} جنيه
+                    </p>
+                    <span *ngIf="payment.isPaid" class="text-xs text-green-600"
+                      >✓ مدفوع</span
+                    >
+                    <span
+                      *ngIf="!payment.isPaid"
+                      class="text-xs text-orange-600"
+                      >⏳ معلق</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div *ngIf="contract.notes" class="pt-4 border-t border-gray-200">
+            <p class="text-sm text-gray-600">
+              <span class="font-semibold">ملاحظات:</span> {{ contract.notes }}
+            </p>
+          </div>
+        </app-card>
+
+        <!-- Empty State -->
+        <div *ngIf="filteredContracts.length === 0" class="text-center py-12">
+          <div class="text-gray-400 text-6xl mb-4">📄</div>
+          <h3 class="text-xl font-semibold text-gray-700 mb-2">لا توجد عقود</h3>
+          <p class="text-gray-500">جرب تغيير معايير البحث</p>
+        </div>
+      </div>
+
+      <!-- Summary Footer -->
+      <div *ngIf="!loading && filteredContracts.length > 0" class="mt-6">
+        <app-card>
+          <div class="flex justify-between items-center">
+            <p class="text-gray-600">
+              عرض
+              <span class="font-semibold">{{ filteredContracts.length }}</span>
+              من <span class="font-semibold">{{ contracts.length }}</span> عقد
+            </p>
+            <div class="flex gap-4 text-sm">
+              <span class="text-gray-600">
+                إجمالي قيمة العقود:
+                <span class="font-semibold text-green-600">
+                  {{ filteredContracts.reduce((sum, c) => sum + c.totalValue, 0) | number:'1.0-0' }}
+                  جنيه
+                </span>
+              </span>
+            </div>
+          </div>
+        </app-card>
+      </div>
+    </main>
+  </div>
+</div>

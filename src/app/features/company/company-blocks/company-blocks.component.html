@@ -1,0 +1,203 @@
+<div class="flex min-h-screen bg-gray-50">
+  <app-sidebar></app-sidebar>
+  <div class="flex-1 mr-64">
+    <app-topbar></app-topbar>
+
+    <main class="p-6">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800 mb-2">
+            الكتل الزراعية 🗺️
+          </h1>
+          <p class="text-gray-600">إدارة ومتابعة جميع الكتل الزراعية</p>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <app-card class="mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="label">بحث</label>
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (input)="applyFilters()"
+              placeholder="اسم الكتلة أو الموقع..."
+              class="input-field"
+            />
+          </div>
+
+          <div>
+            <label class="label">المحافظة</label>
+            <select
+              [(ngModel)]="selectedGovernorate"
+              (change)="applyFilters()"
+              class="input-field"
+            >
+              <option value="">جميع المحافظات</option>
+              <option *ngFor="let gov of governorates" [value]="gov">
+                {{ gov }}
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="label">الحالة</label>
+            <select
+              [(ngModel)]="selectedStatus"
+              (change)="applyFilters()"
+              class="input-field"
+            >
+              <option value="">جميع الحالات</option>
+              <option value="active">نشط</option>
+              <option value="planned">مخطط</option>
+              <option value="completed">مكتمل</option>
+            </select>
+          </div>
+
+          <div class="flex items-end">
+            <button (click)="clearFilters()" class="btn-secondary w-full">
+              مسح الفلاتر
+            </button>
+          </div>
+        </div>
+      </app-card>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex justify-center items-center py-12">
+        <app-loader></app-loader>
+      </div>
+
+      <!-- Blocks Grid -->
+      <div *ngIf="!loading" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <app-card
+          *ngFor="let block of filteredBlocks"
+          class="hover:shadow-lg transition"
+        >
+          <!-- Block Header -->
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3 class="text-xl font-bold text-gray-800">{{ block.name }}</h3>
+              <p class="text-sm text-gray-600">
+                {{ block.governorate }} - {{ block.location }}
+              </p>
+            </div>
+            <app-badge [variant]="getStatusColor(block.completionPercentage)">
+              {{ getStatusText(block.completionPercentage) }}
+            </app-badge>
+          </div>
+
+          <!-- Block Stats -->
+          <div class="grid grid-cols-3 gap-4 mb-4">
+            <div class="text-center p-3 bg-blue-50 rounded-lg">
+              <p class="text-2xl font-bold text-blue-600">
+                {{ block.totalArea }}
+              </p>
+              <p class="text-xs text-gray-600">فدان</p>
+            </div>
+            <div class="text-center p-3 bg-green-50 rounded-lg">
+              <p class="text-2xl font-bold text-green-600">
+                {{ block.landsCount }}
+              </p>
+              <p class="text-xs text-gray-600">أرض</p>
+            </div>
+            <div class="text-center p-3 bg-purple-50 rounded-lg">
+              <p class="text-2xl font-bold text-purple-600">
+                {{ block.contractsCount }}
+              </p>
+              <p class="text-xs text-gray-600">عقد</p>
+            </div>
+          </div>
+
+          <!-- Progress -->
+          <div class="mb-4">
+            <div class="flex justify-between text-sm text-gray-600 mb-2">
+              <span>التقدم</span>
+              <span class="font-semibold"
+                >{{ block.completionPercentage }}%</span
+              >
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+              <div
+                class="h-3 rounded-full transition-all duration-300"
+                [ngClass]="{
+                  'bg-green-500': block.completionPercentage >= 75,
+                  'bg-yellow-500':
+                    block.completionPercentage >= 50 &&
+                    block.completionPercentage < 75,
+                  'bg-red-500': block.completionPercentage < 50
+                }"
+                [style.width.%]="block.completionPercentage"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Financial Info -->
+          <div class="space-y-2 mb-4 pb-4 border-b border-gray-200">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">الاستثمار الإجمالي:</span>
+              <span class="font-semibold"
+                >{{ block.totalInvestment | number : "1.0-0" }} جنيه</span
+              >
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">العوائد المتوقعة:</span>
+              <span class="font-semibold text-green-600"
+                >{{ block.expectedRevenue | number : "1.0-0" }} جنيه</span
+              >
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">متوسط الإنتاجية:</span>
+              <span class="font-semibold"
+                >{{ block.averageYield | number : "1.1-1" }} طن/فدان</span
+              >
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="grid grid-cols-2 gap-3">
+            <button class="btn-primary text-center text-sm">
+              عرض التفاصيل
+            </button>
+            <button class="btn-secondary text-center text-sm">
+              التقارير المالية
+            </button>
+          </div>
+        </app-card>
+
+        <!-- Empty State -->
+        <div
+          *ngIf="filteredBlocks.length === 0"
+          class="col-span-full text-center py-12"
+        >
+          <div class="text-gray-400 text-6xl mb-4">🗺️</div>
+          <h3 class="text-xl font-semibold text-gray-700 mb-2">
+            لا توجد كتل زراعية
+          </h3>
+          <p class="text-gray-500">جرب تغيير معايير البحث</p>
+        </div>
+      </div>
+
+      <!-- Summary Footer -->
+      <div *ngIf="!loading && filteredBlocks.length > 0" class="mt-6">
+        <app-card>
+          <div class="flex justify-between items-center">
+            <p class="text-gray-600">
+              عرض
+              <span class="font-semibold">{{ filteredBlocks.length }}</span> من
+              <span class="font-semibold">{{ blocks.length }}</span> كتلة زراعية
+            </p>
+            <div class="text-sm text-gray-500">
+              إجمالي المساحة:
+              <span class="font-semibold text-gray-700">
+                {{ filteredBlocks.reduce((sum, b) => sum + b.totalArea, 0) | number:'1.0-0' }}
+                فدان
+              </span>
+            </div>
+          </div>
+        </app-card>
+      </div>
+    </main>
+  </div>
+</div>

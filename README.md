@@ -9,18 +9,21 @@
 ## ⭐ المزايا المتقدمة الجديدة
 
 ### 🚀 الأداء والتحسينات
+
 - **HTTP Interceptors**: إضافة JWT تلقائياً ومعالجة أخطاء موحدة
 - **Smart Preloading**: تحميل مسبق ذكي للوحدات
 - **Caching System**: نظام تخزين مؤقت للبيانات
 - **Performance Tracking**: تتبع أداء التطبيق
 
 ### 🎨 تجربة المستخدم
+
 - **Toast Notifications**: إشعارات احترافية
 - **Loading Indicators**: مؤشرات تحميل تلقائية
 - **Network Status**: تنبيهات حالة الشبكة
 - **Global Error Handler**: معالج أخطاء شامل
 
 ### 🛠️ أدوات المطورين
+
 - **Custom Validators**: 10+ مدقق مخصص
 - **Custom Pipes**: 4 أنابيب للتنسيق
 - **Custom Directives**: 3 توجيهات مفيدة
@@ -52,12 +55,14 @@
 ## التقنيات المستخدمة
 
 ### Core Technologies
+
 - **Frontend Framework**: Angular 16.2.12
 - **Styling**: TailwindCSS 3.3.6
 - **Language**: TypeScript 5.1
 - **Package Manager**: npm
 
 ### Architecture & Patterns
+
 - **State Management**: RxJS & BehaviorSubject
 - **Forms**: Reactive Forms with Custom Validators
 - **Routing**: Lazy Loading with Custom Preloading Strategy
@@ -65,6 +70,7 @@
 - **Authentication**: JWT Token Pattern
 
 ### Advanced Features
+
 - **Caching**: In-Memory Cache Service
 - **Analytics**: Page Tracking & Performance Monitoring
 - **SEO**: Meta Tags Management
@@ -73,12 +79,12 @@
 - **Notifications**: Toast Service with Animations
 
 ### Development Tools
+
 - **Custom Validators**: 10+ validators
 - **Custom Pipes**: 4 pipes for formatting
 - **Custom Directives**: 3 useful directives
 - **Utility Functions**: 40+ helper functions
 - **Constants**: 200+ app constants
-
 
 ## هيكل المشروع
 
@@ -229,21 +235,23 @@ export const environment = {
 ## 🎯 الميزات البارزة
 
 ### Auto Features (تعمل تلقائياً)
+
 ✅ JWT Token في كل طلب HTTP  
 ✅ مؤشر التحميل العام  
 ✅ معالجة الأخطاء الموحدة  
 ✅ Toast للإشعارات  
 ✅ تنبيهات حالة الشبكة  
-✅ التحميل المسبق للوحدات  
+✅ التحميل المسبق للوحدات
 
 ### Developer Tools (أدوات جاهزة)
+
 ✅ 10+ Custom Validators  
 ✅ 4 Custom Pipes  
 ✅ 3 Custom Directives  
 ✅ 40+ Helper Functions  
 ✅ 200+ Constants  
 ✅ Cache Service  
-✅ Analytics Service  
+✅ Analytics Service
 
 ## المساهمة
 

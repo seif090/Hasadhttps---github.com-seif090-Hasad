@@ -1,25 +1,97 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CompanyService } from '../../../core/services/company.service';
+import { Block } from '../../../core/models/land.model';
 
 /**
  * صفحة الكتل الزراعية
  */
 @Component({
   selector: 'app-company-blocks',
-  template: `
-    <div class="flex min-h-screen bg-gray-50">
-      <app-sidebar></app-sidebar>
-      <div class="flex-1 mr-64">
-        <app-topbar></app-topbar>
-        <main class="p-6">
-          <h1 class="text-3xl font-bold text-gray-800 mb-6">
-            الكتل الزراعية 🗺️
-          </h1>
-          <div class="card">
-            <p class="text-gray-600">إدارة الكتل الزراعية - قيد التطوير</p>
-          </div>
-        </main>
-      </div>
-    </div>
-  `,
+  templateUrl: './company-blocks.component.html',
+  styleUrls: ['./company-blocks.component.scss'],
 })
-export class CompanyBlocksComponent {}
+export class CompanyBlocksComponent implements OnInit {
+  blocks: Block[] = [];
+  filteredBlocks: Block[] = [];
+  loading = false;
+
+  // Filters
+  searchTerm = '';
+  selectedGovernorate = '';
+  selectedStatus = '';
+
+  governorates: string[] = [];
+
+  constructor(private companyService: CompanyService) {}
+
+  ngOnInit(): void {
+    this.loadBlocks();
+  }
+
+  /**
+   * تحميل الكتل الزراعية
+   */
+  loadBlocks(): void {
+    this.loading = true;
+
+    this.companyService.getCompanyBlocks('COMP-001').subscribe({
+      next: (blocks) => {
+        this.blocks = blocks;
+        this.filteredBlocks = blocks;
+        this.governorates = [...new Set(blocks.map((b) => b.governorate))];
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading blocks:', error);
+        this.loading = false;
+      },
+    });
+  }
+
+  /**
+   * تطبيق الفلاتر
+   */
+  applyFilters(): void {
+    this.filteredBlocks = this.blocks.filter((block) => {
+      const matchesSearch =
+        !this.searchTerm ||
+        block.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        block.location.toLowerCase().includes(this.searchTerm.toLowerCase());
+
+      const matchesGovernorate =
+        !this.selectedGovernorate ||
+        block.governorate === this.selectedGovernorate;
+
+      return matchesSearch && matchesGovernorate;
+    });
+  }
+
+  /**
+   * مسح الفلاتر
+   */
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.selectedGovernorate = '';
+    this.selectedStatus = '';
+    this.filteredBlocks = this.blocks;
+  }
+
+  /**
+   * الحصول على لون الحالة
+   */
+  getStatusColor(percentage: number): string {
+    if (percentage >= 75) return 'success';
+    if (percentage >= 50) return 'warning';
+    return 'danger';
+  }
+
+  /**
+   * الحصول على نص الحالة
+   */
+  getStatusText(percentage: number): string {
+    if (percentage >= 75) return 'متقدم';
+    if (percentage >= 50) return 'في التقدم';
+    if (percentage > 0) return 'بدأ';
+    return 'جديد';
+  }
+}

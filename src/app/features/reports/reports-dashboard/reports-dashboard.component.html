@@ -1,0 +1,370 @@
+<div class="flex min-h-screen bg-gray-50">
+  <app-sidebar></app-sidebar>
+  <div class="flex-1 mr-64">
+    <app-topbar></app-topbar>
+
+    <main class="p-6">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800 mb-2">التقارير 📊</h1>
+          <p class="text-gray-600">تحليلات ورؤى شاملة عن الأداء</p>
+        </div>
+        <div class="flex gap-2">
+          <button
+            (click)="exportPDF()"
+            class="btn-secondary flex items-center gap-2"
+          >
+            <span>📄</span>
+            <span>تصدير PDF</span>
+          </button>
+          <button
+            (click)="exportExcel()"
+            class="btn-primary flex items-center gap-2"
+          >
+            <span>📊</span>
+            <span>تصدير Excel</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <app-card class="mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="label">الفترة الزمنية</label>
+            <select
+              [(ngModel)]="selectedPeriod"
+              (change)="applyFilters()"
+              class="input-field"
+            >
+              <option value="month">الشهر الحالي</option>
+              <option value="quarter">الربع الحالي</option>
+              <option value="year">السنة الحالية</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="label">المحافظة</label>
+            <select
+              [(ngModel)]="selectedGovernorate"
+              (change)="applyFilters()"
+              class="input-field"
+            >
+              <option value="">جميع المحافظات</option>
+              <option value="الشرقية">الشرقية</option>
+              <option value="الدقهلية">الدقهلية</option>
+              <option value="البحيرة">البحيرة</option>
+              <option value="كفر الشيخ">كفر الشيخ</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2 flex items-end gap-2">
+            <button (click)="clearFilters()" class="btn-secondary flex-1">
+              مسح الفلاتر
+            </button>
+          </div>
+        </div>
+      </app-card>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex justify-center items-center py-12">
+        <app-loader></app-loader>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div
+        *ngIf="!loading"
+        class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6"
+      >
+        <app-card>
+          <div class="text-center">
+            <div class="text-3xl mb-2">💰</div>
+            <p class="text-sm text-gray-600 mb-1">إجمالي الإيرادات</p>
+            <p class="text-xl font-bold text-green-600">
+              {{ stats.totalRevenue | number : "1.0-0" }}
+            </p>
+            <p class="text-xs text-gray-500">جنيه مصري</p>
+          </div>
+        </app-card>
+
+        <app-card>
+          <div class="text-center">
+            <div class="text-3xl mb-2">📄</div>
+            <p class="text-sm text-gray-600 mb-1">إجمالي العقود</p>
+            <p class="text-xl font-bold text-blue-600">
+              {{ stats.totalContracts }}
+            </p>
+            <p class="text-xs text-gray-500">عقد</p>
+          </div>
+        </app-card>
+
+        <app-card>
+          <div class="text-center">
+            <div class="text-3xl mb-2">🏢</div>
+            <p class="text-sm text-gray-600 mb-1">إجمالي البلوكات</p>
+            <p class="text-xl font-bold text-purple-600">
+              {{ stats.totalBlocks }}
+            </p>
+            <p class="text-xs text-gray-500">بلوك</p>
+          </div>
+        </app-card>
+
+        <app-card>
+          <div class="text-center">
+            <div class="text-3xl mb-2">📏</div>
+            <p class="text-sm text-gray-600 mb-1">إجمالي المساحة</p>
+            <p class="text-xl font-bold text-orange-600">
+              {{ stats.totalArea | number : "1.0-0" }}
+            </p>
+            <p class="text-xs text-gray-500">فدان</p>
+          </div>
+        </app-card>
+
+        <app-card>
+          <div class="text-center">
+            <div class="text-3xl mb-2">✅</div>
+            <p class="text-sm text-gray-600 mb-1">العقود النشطة</p>
+            <p class="text-xl font-bold text-green-600">
+              {{ stats.activeContracts }}
+            </p>
+            <p class="text-xs text-gray-500">عقد نشط</p>
+          </div>
+        </app-card>
+
+        <app-card>
+          <div class="text-center">
+            <div class="text-3xl mb-2">📈</div>
+            <p class="text-sm text-gray-600 mb-1">متوسط الإنتاجية</p>
+            <p class="text-xl font-bold text-indigo-600">
+              {{ stats.averageYield | number : "1.1-1" }}
+            </p>
+            <p class="text-xs text-gray-500">طن/فدان</p>
+          </div>
+        </app-card>
+      </div>
+
+      <!-- Charts Grid -->
+      <div *ngIf="!loading" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Revenue by Month Chart -->
+        <app-card>
+          <h3
+            class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"
+          >
+            <span>📈</span>
+            <span>الإيرادات الشهرية</span>
+          </h3>
+          <div
+            class="chart-container"
+            style="position: relative; height: 300px"
+          >
+            <div class="space-y-2">
+              <div
+                *ngFor="let label of revenueByMonthData.labels; let i = index"
+                class="flex items-center gap-2"
+              >
+                <div class="w-24 text-sm text-gray-600">{{ label }}</div>
+                <div
+                  class="flex-1 bg-gray-200 rounded-full h-8 relative overflow-hidden"
+                >
+                  <div
+                    class="bg-gradient-to-r from-green-400 to-green-600 h-full flex items-center justify-end px-2 text-white text-sm font-semibold transition-all duration-500"
+                    [style.width.%]="(revenueByMonthData.data[i] / Math.max(...revenueByMonthData.data)) * 100"
+                  >
+                    <span *ngIf="revenueByMonthData.data[i] > 0">{{
+                      revenueByMonthData.data[i] | number : "1.0-0"
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </app-card>
+
+        <!-- Contracts by Status Chart -->
+        <app-card>
+          <h3
+            class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"
+          >
+            <span>📊</span>
+            <span>العقود حسب الحالة</span>
+          </h3>
+          <div
+            class="chart-container"
+            style="position: relative; height: 300px"
+          >
+            <div class="flex items-center justify-center h-full">
+              <div class="grid grid-cols-2 gap-4 w-full">
+                <div
+                  *ngFor="
+                    let label of contractsByStatusData.labels;
+                    let i = index
+                  "
+                  class="p-4 rounded-lg text-center"
+                  [ngClass]="{
+                    'bg-green-100': label === 'نشط',
+                    'bg-yellow-100': label === 'قيد المراجعة',
+                    'bg-blue-100': label === 'مكتمل',
+                    'bg-red-100': label === 'ملغى'
+                  }"
+                >
+                  <div
+                    class="text-3xl font-bold mb-1"
+                    [ngClass]="{
+                      'text-green-600': label === 'نشط',
+                      'text-yellow-600': label === 'قيد المراجعة',
+                      'text-blue-600': label === 'مكتمل',
+                      'text-red-600': label === 'ملغى'
+                    }"
+                  >
+                    {{ contractsByStatusData.data[i] }}
+                  </div>
+                  <div class="text-sm text-gray-600">{{ label }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </app-card>
+
+        <!-- Blocks by Governorate Chart -->
+        <app-card>
+          <h3
+            class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"
+          >
+            <span>🗺️</span>
+            <span>البلوكات حسب المحافظة</span>
+          </h3>
+          <div
+            class="chart-container"
+            style="position: relative; height: 300px"
+          >
+            <div class="space-y-3">
+              <div
+                *ngFor="
+                  let label of blocksByGovernorateData.labels;
+                  let i = index
+                "
+                class="flex items-center gap-2"
+              >
+                <div class="w-28 text-sm text-gray-600">{{ label }}</div>
+                <div
+                  class="flex-1 bg-gray-200 rounded-full h-10 relative overflow-hidden"
+                >
+                  <div
+                    class="bg-gradient-to-r from-blue-400 to-blue-600 h-full flex items-center justify-between px-3 text-white text-sm font-semibold transition-all duration-500"
+                    [style.width.%]="(blocksByGovernorateData.data[i] / Math.max(...blocksByGovernorateData.data)) * 100"
+                  >
+                    <span>{{ blocksByGovernorateData.data[i] }} بلوك</span>
+                    <span
+                      >{{
+                        (blocksByGovernorateData.data[i] / stats.totalBlocks) *
+                          100 | number : "1.0-0"
+                      }}%</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </app-card>
+
+        <!-- Crop Distribution Chart -->
+        <app-card>
+          <h3
+            class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"
+          >
+            <span>🌾</span>
+            <span>توزيع المحاصيل</span>
+          </h3>
+          <div
+            class="chart-container"
+            style="position: relative; height: 300px"
+          >
+            <div
+              class="flex flex-wrap gap-2 justify-center items-center h-full"
+            >
+              <div
+                *ngFor="let label of cropDistributionData.labels; let i = index"
+                class="p-4 rounded-lg text-center min-w-[120px]"
+                [ngClass]="{
+                  'bg-yellow-100': i % 4 === 0,
+                  'bg-green-100': i % 4 === 1,
+                  'bg-orange-100': i % 4 === 2,
+                  'bg-purple-100': i % 4 === 3
+                }"
+              >
+                <div
+                  class="text-2xl font-bold mb-1"
+                  [ngClass]="{
+                    'text-yellow-600': i % 4 === 0,
+                    'text-green-600': i % 4 === 1,
+                    'text-orange-600': i % 4 === 2,
+                    'text-purple-600': i % 4 === 3
+                  }"
+                >
+                  {{ cropDistributionData.data[i] }}
+                </div>
+                <div class="text-xs text-gray-600">{{ label }}</div>
+                <div class="text-xs text-gray-500 mt-1">
+                  {{
+                    (cropDistributionData.data[i] / stats.totalBlocks) * 100
+                      | number : "1.0-0"
+                  }}%
+                </div>
+              </div>
+            </div>
+          </div>
+        </app-card>
+      </div>
+
+      <!-- Performance Indicators -->
+      <div *ngIf="!loading" class="mt-6">
+        <app-card>
+          <h3 class="text-lg font-bold text-gray-800 mb-4">
+            مؤشرات الأداء الرئيسية
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <div class="flex justify-between text-sm text-gray-600 mb-2">
+                <span>معدل نمو الإيرادات</span>
+                <span class="font-semibold text-green-600">+18.5%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-3">
+                <div
+                  class="bg-green-500 h-3 rounded-full"
+                  style="width: 85%"
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-sm text-gray-600 mb-2">
+                <span>معدل إتمام العقود</span>
+                <span class="font-semibold text-blue-600">92%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-3">
+                <div
+                  class="bg-blue-500 h-3 rounded-full"
+                  style="width: 92%"
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-sm text-gray-600 mb-2">
+                <span>رضا المزارعين</span>
+                <span class="font-semibold text-purple-600">88%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-3">
+                <div
+                  class="bg-purple-500 h-3 rounded-full"
+                  style="width: 88%"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </app-card>
+      </div>
+    </main>
+  </div>
+</div>
