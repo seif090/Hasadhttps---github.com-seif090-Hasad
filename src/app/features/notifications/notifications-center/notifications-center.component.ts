@@ -27,7 +27,7 @@ export class NotificationsCenterComponent implements OnInit {
     info: 0,
     warning: 0,
     success: 0,
-    error: 0
+    error: 0,
   };
 
   constructor(
@@ -57,7 +57,7 @@ export class NotificationsCenterComponent implements OnInit {
         console.error('Error loading notifications:', error);
         this.toastService.error('فشل تحميل الإشعارات');
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -66,19 +66,24 @@ export class NotificationsCenterComponent implements OnInit {
    */
   calculateStats(notifications: Notification[]): void {
     this.stats.total = notifications.length;
-    this.stats.unread = notifications.filter(n => !n.isRead).length;
-    this.stats.info = notifications.filter(n => n.type === 'info').length;
-    this.stats.warning = notifications.filter(n => n.type === 'warning').length;
-    this.stats.success = notifications.filter(n => n.type === 'success').length;
-    this.stats.error = notifications.filter(n => n.type === 'error').length;
+    this.stats.unread = notifications.filter((n) => !n.isRead).length;
+    this.stats.info = notifications.filter((n) => n.type === 'info').length;
+    this.stats.warning = notifications.filter(
+      (n) => n.type === 'warning'
+    ).length;
+    this.stats.success = notifications.filter(
+      (n) => n.type === 'success'
+    ).length;
+    this.stats.error = notifications.filter((n) => n.type === 'error').length;
   }
 
   /**
    * تطبيق الفلاتر
    */
   applyFilters(): void {
-    this.filteredNotifications = this.notifications.filter(notification => {
-      const matchesType = !this.selectedType || notification.type === this.selectedType;
+    this.filteredNotifications = this.notifications.filter((notification) => {
+      const matchesType =
+        !this.selectedType || notification.type === this.selectedType;
       const matchesReadStatus = !this.showUnreadOnly || !notification.isRead;
 
       return matchesType && matchesReadStatus;
@@ -100,7 +105,9 @@ export class NotificationsCenterComponent implements OnInit {
   markAsRead(notificationId: string): void {
     this.notificationService.markAsRead(notificationId).subscribe({
       next: () => {
-        const notification = this.notifications.find(n => n.id === notificationId);
+        const notification = this.notifications.find(
+          (n) => n.id === notificationId
+        );
         if (notification) {
           notification.isRead = true;
           this.calculateStats(this.notifications);
@@ -111,7 +118,7 @@ export class NotificationsCenterComponent implements OnInit {
       error: (error) => {
         console.error('Error marking notification as read:', error);
         this.toastService.error('فشل تحديد الإشعار كمقروء');
-      }
+      },
     });
   }
 
@@ -121,7 +128,7 @@ export class NotificationsCenterComponent implements OnInit {
   markAllAsRead(): void {
     this.notificationService.markAllAsRead().subscribe({
       next: () => {
-        this.notifications.forEach(n => n.isRead = true);
+        this.notifications.forEach((n) => (n.isRead = true));
         this.calculateStats(this.notifications);
         this.applyFilters();
         this.toastService.success('تم تحديد جميع الإشعارات كمقروءة');
@@ -129,7 +136,7 @@ export class NotificationsCenterComponent implements OnInit {
       error: (error) => {
         console.error('Error marking all notifications as read:', error);
         this.toastService.error('فشل تحديد الإشعارات كمقروءة');
-      }
+      },
     });
   }
 
@@ -138,11 +145,16 @@ export class NotificationsCenterComponent implements OnInit {
    */
   getTypeIcon(type: string): string {
     switch (type) {
-      case 'info': return 'ℹ️';
-      case 'warning': return '⚠️';
-      case 'success': return '✅';
-      case 'error': return '❌';
-      default: return '📢';
+      case 'info':
+        return 'ℹ️';
+      case 'warning':
+        return '⚠️';
+      case 'success':
+        return '✅';
+      case 'error':
+        return '❌';
+      default:
+        return '📢';
     }
   }
 
@@ -151,11 +163,16 @@ export class NotificationsCenterComponent implements OnInit {
    */
   getTypeColor(type: string): 'info' | 'warning' | 'success' | 'danger' {
     switch (type) {
-      case 'info': return 'info';
-      case 'warning': return 'warning';
-      case 'success': return 'success';
-      case 'error': return 'danger';
-      default: return 'info';
+      case 'info':
+        return 'info';
+      case 'warning':
+        return 'warning';
+      case 'success':
+        return 'success';
+      case 'error':
+        return 'danger';
+      default:
+        return 'info';
     }
   }
 
