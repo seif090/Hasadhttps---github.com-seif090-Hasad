@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CompanyService } from '../../../core/services/company.service';
-import { Block } from '../../../core/models/land.model';
+import { LandBlock } from '../../../core/models/company.model';
 
 /**
  * صفحة الكتل الزراعية
@@ -11,8 +11,8 @@ import { Block } from '../../../core/models/land.model';
   styleUrls: ['./company-blocks.component.scss'],
 })
 export class CompanyBlocksComponent implements OnInit {
-  blocks: Block[] = [];
-  filteredBlocks: Block[] = [];
+  blocks: LandBlock[] = [];
+  filteredBlocks: LandBlock[] = [];
   loading = false;
 
   // Filters
@@ -38,7 +38,9 @@ export class CompanyBlocksComponent implements OnInit {
       next: (blocks) => {
         this.blocks = blocks;
         this.filteredBlocks = blocks;
-        this.governorates = [...new Set(blocks.map((b) => b.governorate))];
+        this.governorates = [
+          ...new Set(blocks.map((b) => b.location.governorate)),
+        ];
         this.loading = false;
       },
       error: (error) => {
@@ -53,45 +55,45 @@ export class CompanyBlocksComponent implements OnInit {
    */
   applyFilters(): void {
     this.filteredBlocks = this.blocks.filter((block) => {
-      const matchesSearch =
-        !this.searchTerm ||
-        block.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        block.location.toLowerCase().includes(this.searchTerm.toLowerCase());
+      const matchSearch =
+        this.searchTerm === '' ||
+        block.name.includes(this.searchTerm) ||
+        block.location.governorate.includes(this.searchTerm);
 
-      const matchesGovernorate =
-        !this.selectedGovernorate ||
-        block.governorate === this.selectedGovernorate;
+      const matchGovernorate =
+        this.selectedGovernorate === '' ||
+        block.location.governorate === this.selectedGovernorate;
 
-      return matchesSearch && matchesGovernorate;
+      const matchStatus =
+        this.selectedStatus === '' || block.status === this.selectedStatus;
+
+      return matchSearch && matchGovernorate && matchStatus;
     });
   }
 
-  /**
-   * مسح الفلاتر
-   */
+  getFilteredTotalArea(): number {
+    return this.filteredBlocks.reduce((sum, b) => sum + b.totalArea, 0);
+  }
+
   clearFilters(): void {
     this.searchTerm = '';
     this.selectedGovernorate = '';
     this.selectedStatus = '';
-    this.filteredBlocks = this.blocks;
+    this.applyFilters();
   }
 
-  /**
-   * الحصول على لون الحالة
-   */
-  getStatusColor(percentage: number): string {
-    if (percentage >= 75) return 'success';
-    if (percentage >= 50) return 'warning';
-    return 'danger';
-  }
-
-  /**
-   * الحصول على نص الحالة
-   */
-  getStatusText(percentage: number): string {
-    if (percentage >= 75) return 'متقدم';
-    if (percentage >= 50) return 'في التقدم';
-    if (percentage > 0) return 'بدأ';
-    return 'جديد';
+  getStatusColor(
+    status: string
+  ): 'success' | 'warning' | 'info' | 'danger' | 'default' {
+    switch (status) {
+      case 'نشط':
+        return 'success';
+      case 'معلق':
+        return 'warning';
+      case 'مكتمل':
+        return 'info';
+      default:
+        return 'default';
+    }
   }
 }

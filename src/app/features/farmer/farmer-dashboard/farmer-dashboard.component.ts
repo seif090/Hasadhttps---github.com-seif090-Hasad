@@ -61,7 +61,9 @@ export class FarmerDashboardComponent implements OnInit {
   /**
    * الحصول على لون حالة الأرض
    */
-  getLandStatusColor(status: string): string {
+  getLandStatusColor(
+    status: string
+  ): 'success' | 'warning' | 'info' | 'danger' | 'default' {
     const colors: any = {
       متاحة: 'success',
       مؤجرة: 'info',
@@ -74,11 +76,14 @@ export class FarmerDashboardComponent implements OnInit {
   /**
    * الحصول على لون حالة العقد
    */
-  getContractStatusColor(status: string): string {
+  getContractStatusColor(
+    status: string
+  ): 'success' | 'warning' | 'info' | 'danger' | 'default' {
     const colors: any = {
       نشط: 'success',
       منتهي: 'default',
       معلق: 'warning',
+      mlghi: 'danger',
       ملغي: 'danger',
     };
     return colors[status] || 'default';

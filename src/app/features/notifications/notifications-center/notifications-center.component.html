@@ -129,10 +129,10 @@
             <div
               class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
               [ngClass]="{
-                'bg-blue-100': notification.type === 'info',
-                'bg-yellow-100': notification.type === 'warning',
-                'bg-green-100': notification.type === 'success',
-                'bg-red-100': notification.type === 'error'
+                'bg-blue-100': false,
+                'bg-yellow-100': false,
+                'bg-green-100': false,
+                'bg-red-100': false
               }"
             >
               <span class="text-2xl">{{ getTypeIcon(notification.type) }}</span>
@@ -178,16 +178,8 @@
                 class="flex items-center justify-between pt-2 border-t border-gray-200"
               >
                 <div class="flex items-center gap-2">
-                  <app-badge [variant]="getTypeColor(notification.type)">
-                    {{
-                      notification.type === "info"
-                        ? "معلومات"
-                        : notification.type === "warning"
-                        ? "تحذير"
-                        : notification.type === "success"
-                        ? "نجاح"
-                        : "خطأ"
-                    }}
+                  <app-badge [variant]="'default'">
+                    {{ notification.type }}
                   </app-badge>
                   <span class="text-xs text-gray-500">
                     {{ notification.createdAt | date : "dd/MM/yyyy HH:mm" }}

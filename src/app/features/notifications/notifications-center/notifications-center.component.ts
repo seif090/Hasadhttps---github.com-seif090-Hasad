@@ -67,14 +67,20 @@ export class NotificationsCenterComponent implements OnInit {
   calculateStats(notifications: Notification[]): void {
     this.stats.total = notifications.length;
     this.stats.unread = notifications.filter((n) => !n.isRead).length;
-    this.stats.info = notifications.filter((n) => n.type === 'info').length;
-    this.stats.warning = notifications.filter(
-      (n) => n.type === 'warning'
+
+    // Map Arabic types to stats keys roughly
+    this.stats.info = notifications.filter((n) =>
+      ['تقرير جديد', 'رسالة', 'مهمة جديدة'].includes(n.type)
     ).length;
-    this.stats.success = notifications.filter(
-      (n) => n.type === 'success'
+    this.stats.warning = notifications.filter((n) =>
+      ['تحديث عقد'].includes(n.type)
     ).length;
-    this.stats.error = notifications.filter((n) => n.type === 'error').length;
+    this.stats.success = notifications.filter((n) =>
+      ['تنبيه حصاد'].includes(n.type)
+    ).length;
+    this.stats.error = notifications.filter((n) =>
+      ['موعد دفع'].includes(n.type)
+    ).length;
   }
 
   /**
@@ -126,7 +132,7 @@ export class NotificationsCenterComponent implements OnInit {
    * تحديد جميع الإشعارات كمقروءة
    */
   markAllAsRead(): void {
-    this.notificationService.markAllAsRead().subscribe({
+    this.notificationService.markAllAsRead('1').subscribe({
       next: () => {
         this.notifications.forEach((n) => (n.isRead = true));
         this.calculateStats(this.notifications);

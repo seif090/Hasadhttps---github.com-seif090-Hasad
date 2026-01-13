@@ -169,7 +169,11 @@
                 >
                   <div
                     class="bg-gradient-to-r from-green-400 to-green-600 h-full flex items-center justify-end px-2 text-white text-sm font-semibold transition-all duration-500"
-                    [style.width.%]="(revenueByMonthData.data[i] / Math.max(...revenueByMonthData.data)) * 100"
+                    [style.width.%]="
+                      (revenueByMonthData.data[i] /
+                        getMaxValue(revenueByMonthData.data)) *
+                      100
+                    "
                   >
                     <span *ngIf="revenueByMonthData.data[i] > 0">{{
                       revenueByMonthData.data[i] | number : "1.0-0"
@@ -252,13 +256,19 @@
                 >
                   <div
                     class="bg-gradient-to-r from-blue-400 to-blue-600 h-full flex items-center justify-between px-3 text-white text-sm font-semibold transition-all duration-500"
-                    [style.width.%]="(blocksByGovernorateData.data[i] / Math.max(...blocksByGovernorateData.data)) * 100"
+                    [style.width.%]="
+                      (blocksByGovernorateData.data[i] /
+                        getMaxValue(blocksByGovernorateData.data)) *
+                      100
+                    "
                   >
                     <span>{{ blocksByGovernorateData.data[i] }} بلوك</span>
                     <span
                       >{{
-                        (blocksByGovernorateData.data[i] / stats.totalBlocks) *
-                          100 | number : "1.0-0"
+                        getPercentage(
+                          blocksByGovernorateData.data[i],
+                          stats.totalBlocks
+                        )
                       }}%</span
                     >
                   </div>
@@ -307,8 +317,10 @@
                 <div class="text-xs text-gray-600">{{ label }}</div>
                 <div class="text-xs text-gray-500 mt-1">
                   {{
-                    (cropDistributionData.data[i] / stats.totalBlocks) * 100
-                      | number : "1.0-0"
+                    getPercentage(
+                      cropDistributionData.data[i],
+                      stats.totalBlocks
+                    )
                   }}%
                 </div>
               </div>

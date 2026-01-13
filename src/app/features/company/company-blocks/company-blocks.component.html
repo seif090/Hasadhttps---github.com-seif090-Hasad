@@ -80,11 +80,11 @@
             <div>
               <h3 class="text-xl font-bold text-gray-800">{{ block.name }}</h3>
               <p class="text-sm text-gray-600">
-                {{ block.governorate }} - {{ block.location }}
+                {{ block.location.governorate }} - {{ block.location.district }}
               </p>
             </div>
-            <app-badge [variant]="getStatusColor(block.completionPercentage)">
-              {{ getStatusText(block.completionPercentage) }}
+            <app-badge [variant]="getStatusColor(block.status)">
+              {{ block.status }}
             </app-badge>
           </div>
 
@@ -98,20 +98,20 @@
             </div>
             <div class="text-center p-3 bg-green-50 rounded-lg">
               <p class="text-2xl font-bold text-green-600">
-                {{ block.landsCount }}
+                {{ block.numberOfLands }}
               </p>
               <p class="text-xs text-gray-600">أرض</p>
             </div>
-            <div class="text-center p-3 bg-purple-50 rounded-lg">
+            <!-- <div class="text-center p-3 bg-purple-50 rounded-lg">
               <p class="text-2xl font-bold text-purple-600">
                 {{ block.contractsCount }}
               </p>
               <p class="text-xs text-gray-600">عقد</p>
-            </div>
+            </div> -->
           </div>
 
           <!-- Progress -->
-          <div class="mb-4">
+          <!-- <div class="mb-4">
             <div class="flex justify-between text-sm text-gray-600 mb-2">
               <span>التقدم</span>
               <span class="font-semibold"
@@ -131,7 +131,7 @@
                 [style.width.%]="block.completionPercentage"
               ></div>
             </div>
-          </div>
+          </div> -->
 
           <!-- Financial Info -->
           <div class="space-y-2 mb-4 pb-4 border-b border-gray-200">
@@ -147,12 +147,12 @@
                 >{{ block.expectedRevenue | number : "1.0-0" }} جنيه</span
               >
             </div>
-            <div class="flex justify-between text-sm">
+            <!-- <div class="flex justify-between text-sm">
               <span class="text-gray-600">متوسط الإنتاجية:</span>
               <span class="font-semibold"
                 >{{ block.averageYield | number : "1.1-1" }} طن/فدان</span
               >
-            </div>
+            </div> -->
           </div>
 
           <!-- Actions -->
@@ -191,7 +191,7 @@
             <div class="text-sm text-gray-500">
               إجمالي المساحة:
               <span class="font-semibold text-gray-700">
-                {{ filteredBlocks.reduce((sum, b) => sum + b.totalArea, 0) | number:'1.0-0' }}
+                {{ getFilteredTotalArea() | number : "1.0-0" }}
                 فدان
               </span>
             </div>

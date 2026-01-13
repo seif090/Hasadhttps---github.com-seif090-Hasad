@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Notification } from '../../../core/models/notification.model';
+import { SharedModule } from '@shared/shared.module';
 
 /**
  * قائمة الإشعارات

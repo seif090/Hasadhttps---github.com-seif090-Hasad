@@ -18,6 +18,7 @@ export interface Notification {
   relatedEntityId?: string; // معرف العنصر المرتبط (مهمة، عقد، إلخ)
   relatedEntityType?: string;
   actionUrl?: string;
+  actionText?: string;
   createdAt: Date;
 }
 

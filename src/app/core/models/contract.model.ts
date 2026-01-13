@@ -3,21 +3,35 @@
  */
 export interface Contract {
   id: string;
+  contractNumber?: string;
   type: 'إيجار' | 'شراكة' | 'خدمات زراعية';
   farmerId: string;
   farmerName: string;
   companyId: string;
   companyName: string;
   landIds: string[];
+  landName?: string;
   startDate: Date;
   endDate: Date;
-  status: 'نشط' | 'منتهي' | 'معلق' | 'ملغي';
+  duration?: number; // months
+  status: 'نشط' | 'منتهي' | 'معلق' | 'ملغي' | 'مكتمل' | 'قيد المراجعة';
+  totalValue?: number;
+  paidAmount?: number;
+  remainingAmount?: number;
+  notes?: string;
   terms: {
     totalAmount: number;
     paymentSchedule: 'شهري' | 'ربع سنوي' | 'نصف سنوي' | 'سنوي';
     paymentMethod: 'نقدي' | 'تحويل بنكي' | 'شيك';
     specialConditions?: string[];
   };
+  paymentSchedule?: {
+    id: string;
+    amount: number;
+    dueDate: Date;
+    isPaid: boolean;
+    paidDate?: Date;
+  }[];
   documents: {
     id: string;
     name: string;

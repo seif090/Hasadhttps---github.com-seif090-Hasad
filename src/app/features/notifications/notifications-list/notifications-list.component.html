@@ -32,10 +32,10 @@
             <div
               class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
               [ngClass]="{
-                'bg-blue-100': notification.type === 'info',
-                'bg-yellow-100': notification.type === 'warning',
-                'bg-green-100': notification.type === 'success',
-                'bg-red-100': notification.type === 'error'
+                'bg-blue-100': false,
+                'bg-yellow-100': false,
+                'bg-green-100': false,
+                'bg-red-100': false
               }"
             >
               <span class="text-xl">{{ getTypeIcon(notification.type) }}</span>

@@ -1,20 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CompanyDashboardComponent } from './company-dashboard/company-dashboard.component';
+import { CompanyBlocksComponent } from './company-blocks/company-blocks.component';
 
 const routes: Routes = [
   {
     path: 'dashboard',
-    loadChildren: () =>
-      import('./company-dashboard/company-dashboard.component').then(
-        (m) => m.CompanyDashboardComponent
-      ),
+    component: CompanyDashboardComponent,
   },
   {
     path: 'blocks',
-    loadChildren: () =>
-      import('./company-blocks/company-blocks.component').then(
-        (m) => m.CompanyBlocksComponent
-      ),
+    component: CompanyBlocksComponent,
   },
   {
     path: '',

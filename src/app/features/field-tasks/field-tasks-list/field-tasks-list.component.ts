@@ -64,11 +64,9 @@ export class FieldTasksListComponent implements OnInit {
    */
   calculateStats(tasks: FieldTask[]): void {
     this.stats.total = tasks.length;
-    this.stats.pending = tasks.filter(
-      (t) => t.status === 'قيد الانتظار'
-    ).length;
+    this.stats.pending = tasks.filter((t) => t.status === 'جديدة').length;
     this.stats.inProgress = tasks.filter(
-      (t) => t.status === 'جاري التنفيذ'
+      (t) => t.status === 'قيد التنفيذ'
     ).length;
     this.stats.completed = tasks.filter((t) => t.status === 'مكتملة').length;
   }
@@ -81,7 +79,7 @@ export class FieldTasksListComponent implements OnInit {
       const matchesSearch =
         !this.searchTerm ||
         task.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        task.landName.toLowerCase().includes(this.searchTerm.toLowerCase());
+        task.description.toLowerCase().includes(this.searchTerm.toLowerCase());
 
       const matchesStatus =
         !this.selectedStatus || task.status === this.selectedStatus;

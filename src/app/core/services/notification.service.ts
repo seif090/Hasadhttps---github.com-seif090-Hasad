@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
-import { Notification, Alert } from '../models/notification.model';
+import { delay } from 'rxjs/operators';
+import {
+  Notification as AppNotification,
+  Alert,
+} from '../models/notification.model';
 
 /**
  * خدمة الإشعارات
@@ -15,8 +18,12 @@ export class NotificationService {
   private unreadCountSubject = new BehaviorSubject<number>(0);
   public unreadCount$ = this.unreadCountSubject.asObservable();
 
+  // BehaviorSubject للإشعارات
+  private notificationsSubject = new BehaviorSubject<AppNotification[]>([]);
+  public notifications$ = this.notificationsSubject.asObservable();
+
   // بيانات تجريبية للإشعارات
-  private mockNotifications: Notification[] = [
+  private mockNotifications: AppNotification[] = [
     {
       id: 'n1',
       userId: '1',
@@ -120,23 +127,27 @@ export class NotificationService {
 
   constructor() {
     // حساب عدد الإشعارات غير المقروءة عند التهيئة
+    // this.updateUnreadCount(); // Will call at end of constructor
+    // تحديث الإشعارات
+    this.notificationsSubject.next(this.mockNotifications);
     this.updateUnreadCount();
   }
 
   /**
    * الحصول على جميع الإشعارات للمستخدم
    */
-  getUserNotifications(userId: string): Observable<Notification[]> {
+  getUserNotifications(userId: string): Observable<AppNotification[]> {
     const notifications = this.mockNotifications
       .filter((n) => n.userId === userId)
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    this.notificationsSubject.next(notifications);
     return of(notifications).pipe(delay(400));
   }
 
   /**
    * الحصول على الإشعارات غير المقروءة
    */
-  getUnreadNotifications(userId: string): Observable<Notification[]> {
+  getUnreadNotifications(userId: string): Observable<AppNotification[]> {
     const unread = this.mockNotifications.filter(
       (n) => n.userId === userId && !n.isRead
     );
@@ -146,15 +157,16 @@ export class NotificationService {
   /**
    * وضع علامة مقروء على إشعار
    */
-  markAsRead(notificationId: string): Observable<boolean> {
+  markAsRead(notificationId: string): Observable<void> {
     const notification = this.mockNotifications.find(
       (n) => n.id === notificationId
     );
     if (notification) {
       notification.isRead = true;
       this.updateUnreadCount();
+      this.notificationsSubject.next(this.mockNotifications);
     }
-    return of(true).pipe(delay(200));
+    return of(undefined).pipe(delay(200));
   }
 
   /**
@@ -186,9 +198,9 @@ export class NotificationService {
    * إنشاء إشعار جديد
    */
   createNotification(
-    notification: Omit<Notification, 'id' | 'createdAt'>
-  ): Observable<Notification> {
-    const newNotification: Notification = {
+    notification: Omit<AppNotification, 'id' | 'createdAt'>
+  ): Observable<AppNotification> {
+    const newNotification: AppNotification = {
       ...notification,
       id: 'n' + (this.mockNotifications.length + 1),
       createdAt: new Date(),

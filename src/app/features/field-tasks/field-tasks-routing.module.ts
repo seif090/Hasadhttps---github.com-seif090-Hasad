@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { FieldTasksListComponent } from './field-tasks-list/field-tasks-list.component';
 
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () =>
-      import('./field-tasks-list/field-tasks-list.component').then(
-        (m) => m.FieldTasksListComponent
-      ),
+    component: FieldTasksListComponent,
   },
 ];
 

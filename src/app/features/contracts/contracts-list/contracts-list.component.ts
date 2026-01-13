@@ -39,6 +39,11 @@ export class ContractsListComponent implements OnInit {
     this.loadContracts();
   }
 
+  getPaymentPercentage(contract: Contract): number {
+    if (!contract.totalValue) return 0;
+    return ((contract.paidAmount || 0) / contract.totalValue) * 100;
+  }
+
   /**
    * تحميل العقود
    */
@@ -70,7 +75,10 @@ export class ContractsListComponent implements OnInit {
     this.stats.pending = contracts.filter(
       (c) => c.status === 'قيد المراجعة'
     ).length;
-    this.stats.totalValue = contracts.reduce((sum, c) => sum + c.totalValue, 0);
+    this.stats.totalValue = contracts.reduce(
+      (sum, c) => sum + (c.totalValue || 0),
+      0
+    );
   }
 
   /**
@@ -80,7 +88,7 @@ export class ContractsListComponent implements OnInit {
     this.filteredContracts = this.contracts.filter((contract) => {
       const matchesSearch =
         !this.searchTerm ||
-        contract.contractNumber
+        (contract.contractNumber || '')
           .toLowerCase()
           .includes(this.searchTerm.toLowerCase()) ||
         contract.companyName
@@ -92,6 +100,21 @@ export class ContractsListComponent implements OnInit {
 
       return matchesSearch && matchesStatus;
     });
+  }
+
+  get filteredTotalValue(): number {
+    return this.filteredContracts.reduce(
+      (sum, c) => sum + (c.totalValue || 0),
+      0
+    );
+  }
+
+  isPaymentOverdue(payment: any): boolean {
+    return !payment.isPaid && new Date(payment.dueDate) <= new Date();
+  }
+
+  isPaymentDueSoon(payment: any): boolean {
+    return !payment.isPaid && new Date(payment.dueDate) > new Date();
   }
 
   /**

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CompanyService } from '../../../core/services/company.service';
-import { Block } from '../../../core/models/land.model';
+import { LandBlock } from '../../../core/models/company.model';
 
 /**
  * لوحة تحكم الشركات
@@ -12,7 +12,7 @@ import { Block } from '../../../core/models/land.model';
   styleUrls: ['./company-dashboard.component.scss'],
 })
 export class CompanyDashboardComponent implements OnInit {
-  blocks: Block[] = [];
+  blocks: LandBlock[] = [];
   loading = false;
 
   // Statistics
@@ -25,7 +25,7 @@ export class CompanyDashboardComponent implements OnInit {
     averageYield: 0,
   };
 
-  recentBlocks: Block[] = [];
+  recentBlocks: LandBlock[] = [];
 
   constructor(private companyService: CompanyService) {}
 
@@ -56,7 +56,7 @@ export class CompanyDashboardComponent implements OnInit {
   /**
    * حساب الإحصائيات
    */
-  calculateStats(blocks: Block[]): void {
+  calculateStats(blocks: LandBlock[]): void {
     this.stats.totalBlocks = blocks.length;
     this.stats.totalArea = blocks.reduce(
       (sum, block) => sum + block.totalArea,
@@ -70,15 +70,8 @@ export class CompanyDashboardComponent implements OnInit {
       (sum, block) => sum + block.expectedRevenue,
       0
     );
-    this.stats.activeContracts = blocks.reduce(
-      (sum, block) => sum + block.contractsCount,
-      0
-    );
-    this.stats.averageYield =
-      blocks.length > 0
-        ? blocks.reduce((sum, block) => sum + block.averageYield, 0) /
-          blocks.length
-        : 0;
+    this.stats.activeContracts = 0; // Not available in LandBlock
+    this.stats.averageYield = 0; // Not available in LandBlock
   }
 
   /**

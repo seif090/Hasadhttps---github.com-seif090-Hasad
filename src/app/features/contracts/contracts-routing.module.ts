@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ContractsListComponent } from './contracts-list/contracts-list.component';
 
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () =>
-      import('./contracts-list/contracts-list.component').then(
-        (m) => m.ContractsListComponent
-      ),
+    component: ContractsListComponent,
   },
 ];
 

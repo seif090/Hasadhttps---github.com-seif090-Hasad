@@ -149,7 +149,8 @@
                       {{ block.name }}
                     </h4>
                     <p class="text-sm text-gray-600">
-                      {{ block.governorate }} - {{ block.location }}
+                      {{ block.location.governorate }} -
+                      {{ block.location.district }}
                     </p>
                   </div>
                   <span
@@ -166,16 +167,12 @@
                   </div>
                   <div>
                     <p class="text-xs text-gray-500">الأراضي</p>
-                    <p class="font-semibold">{{ block.landsCount }} أرض</p>
-                  </div>
-                  <div>
-                    <p class="text-xs text-gray-500">العقود</p>
-                    <p class="font-semibold">{{ block.contractsCount }} عقد</p>
+                    <p class="font-semibold">{{ block.numberOfLands }} أرض</p>
                   </div>
                 </div>
 
                 <!-- Progress Bar -->
-                <div class="mb-2">
+                <!-- <div class="mb-2">
                   <div class="flex justify-between text-xs text-gray-600 mb-1">
                     <span>التقدم</span>
                     <span>{{ block.completionPercentage }}%</span>
@@ -187,7 +184,7 @@
                       [style.width.%]="block.completionPercentage"
                     ></div>
                   </div>
-                </div>
+                </div> -->
 
                 <div
                   class="flex justify-between items-center pt-3 border-t border-gray-100"

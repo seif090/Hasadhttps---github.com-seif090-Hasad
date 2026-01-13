@@ -8,11 +8,21 @@ export interface FieldTask {
   assignedTo: string; // معرف المندوب الميداني
   assignedToName: string;
   landId: string;
+  landName?: string;
   blockId?: string;
   priority: 'عالية' | 'متوسطة' | 'منخفضة';
-  status: 'جديدة' | 'قيد التنفيذ' | 'مكتملة' | 'ملغاة';
+  status:
+    | 'جديدة'
+    | 'قيد التنفيذ'
+    | 'مكتملة'
+    | 'ملغاة'
+    | 'قيد الانتظار'
+    | 'جاري التنفيذ';
   dueDate: Date;
+  scheduledDate?: Date;
   completedDate?: Date;
+  estimatedDuration?: number; // hours
+  photosCount?: number;
   location: {
     governorate: string;
     district: string;

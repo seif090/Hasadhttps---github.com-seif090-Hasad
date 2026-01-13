@@ -86,7 +86,9 @@ export class FarmerLandsComponent implements OnInit {
   /**
    * الحصول على لون حالة الأرض
    */
-  getLandStatusColor(status: string): string {
+  getLandStatusColor(
+    status: string
+  ): 'success' | 'warning' | 'info' | 'danger' | 'default' {
     const colors: any = {
       متاحة: 'success',
       مؤجرة: 'info',
@@ -94,5 +96,9 @@ export class FarmerLandsComponent implements OnInit {
       'تحت الصيانة': 'danger',
     };
     return colors[status] || 'default';
+  }
+
+  get filteredTotalArea(): number {
+    return this.filteredLands.reduce((sum, land) => sum + land.area, 0);
   }
 }

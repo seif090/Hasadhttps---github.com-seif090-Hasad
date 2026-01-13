@@ -73,7 +73,9 @@ export class LandDetailComponent implements OnInit {
   /**
    * الحصول على لون حالة الدورة الزراعية
    */
-  getCycleStatusColor(status: string): string {
+  getCycleStatusColor(
+    status: string
+  ): 'success' | 'warning' | 'info' | 'danger' | 'default' {
     const colors: any = {
       مخطط: 'info',
       'جاري الزراعة': 'warning',
@@ -86,7 +88,9 @@ export class LandDetailComponent implements OnInit {
   /**
    * الحصول على لون جودة الحصاد
    */
-  getQualityColor(quality: string): string {
+  getQualityColor(
+    quality: string
+  ): 'success' | 'warning' | 'info' | 'danger' | 'default' {
     const colors: any = {
       ممتاز: 'success',
       جيد: 'info',

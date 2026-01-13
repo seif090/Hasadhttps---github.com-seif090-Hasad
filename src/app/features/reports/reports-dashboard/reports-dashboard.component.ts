@@ -18,6 +18,7 @@ interface ChartData {
 })
 export class ReportsDashboardComponent implements OnInit {
   loading = false;
+  Math = Math; // For template access
 
   // Filters
   selectedPeriod = 'month'; // month, quarter, year
@@ -72,13 +73,10 @@ export class ReportsDashboardComponent implements OnInit {
         this.stats.totalBlocks = blocks.length;
         this.stats.totalArea = blocks.reduce((sum, b) => sum + b.totalArea, 0);
         this.stats.totalRevenue = blocks.reduce(
-          (sum, b) => sum + b.currentRevenue,
+          (sum, b) => sum + (b.expectedRevenue || 0),
           0
         );
-        this.stats.averageYield =
-          blocks.length > 0
-            ? blocks.reduce((sum, b) => sum + b.averageYield, 0) / blocks.length
-            : 0;
+        this.stats.averageYield = 0;
 
         // Generate chart data
         this.generateBlocksByGovernorateChart(blocks);
@@ -227,5 +225,19 @@ export class ReportsDashboardComponent implements OnInit {
     this.selectedPeriod = 'month';
     this.selectedGovernorate = '';
     this.loadReportsData();
+  }
+
+  /**
+   * الحصول على أقصى قيمة من مصفوفة
+   */
+  getMaxValue(data: number[]): number {
+    return data.length > 0 ? Math.max(...data) : 1;
+  }
+
+  /**
+   * الحصول على نسبة القيمة
+   */
+  getPercentage(value: number, total: number): number {
+    return total > 0 ? Math.round((value / total) * 100) : 0;
   }
 }

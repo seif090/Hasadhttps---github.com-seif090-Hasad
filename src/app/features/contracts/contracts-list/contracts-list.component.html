@@ -203,10 +203,7 @@
             <div>
               <p class="text-xs text-gray-500 mb-1">نسبة السداد</p>
               <p class="font-semibold">
-                {{
-                  (contract.paidAmount / contract.totalValue) * 100
-                    | number : "1.0-0"
-                }}%
+                {{ getPaymentPercentage(contract) | number : "1.0-0" }}%
               </p>
             </div>
           </div>
@@ -239,19 +236,17 @@
             </h4>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
               <div
-                *ngFor="let payment of contract.paymentSchedule"
+                *ngFor="let payment of contract.paymentSchedule; let i = index"
                 class="p-2 rounded border"
                 [ngClass]="{
-                     'bg-green-50 border-green-200': payment.isPaid,
-                     'bg-yellow-50 border-yellow-200': !payment.isPaid && new Date(payment.dueDate) > new Date(),
-                     'bg-red-50 border-red-200': !payment.isPaid && new Date(payment.dueDate) <= new Date()
-                   }"
+                  'bg-green-50 border-green-200': payment.isPaid,
+                  'bg-yellow-50 border-yellow-200': isPaymentDueSoon(payment),
+                  'bg-red-50 border-red-200': isPaymentOverdue(payment)
+                }"
               >
                 <div class="flex justify-between items-center">
                   <div>
-                    <p class="text-xs font-semibold">
-                      دفعة {{ payment.installmentNumber }}
-                    </p>
+                    <p class="text-xs font-semibold">دفعة {{ i + 1 }}</p>
                     <p class="text-xs text-gray-600">
                       {{ payment.dueDate | date : "dd/MM/yyyy" }}
                     </p>
@@ -303,7 +298,7 @@
               <span class="text-gray-600">
                 إجمالي قيمة العقود:
                 <span class="font-semibold text-green-600">
-                  {{ filteredContracts.reduce((sum, c) => sum + c.totalValue, 0) | number:'1.0-0' }}
+                  {{ filteredTotalValue | number : "1.0-0" }}
                   جنيه
                 </span>
               </span>

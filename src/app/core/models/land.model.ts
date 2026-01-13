@@ -25,6 +25,28 @@ export interface Land {
 }
 
 /**
+ * نموذج البلوك (القطعة)
+ */
+export interface Block {
+  id: string;
+  name: string;
+  landId: string;
+  landName?: string;
+  location?: string;
+  totalArea: number;
+  plantedArea?: number;
+  cropType?: string;
+  status: 'active' | 'inactive';
+  governorate?: string;
+  completionPercentage: number;
+  totalInvestment: number;
+  expectedRevenue: number;
+  averageYield: number;
+  currentProductivity?: number;
+  estimatedRevenue?: number;
+}
+
+/**
  * نموذج الدورة الزراعية
  */
 export interface CropCycle {
