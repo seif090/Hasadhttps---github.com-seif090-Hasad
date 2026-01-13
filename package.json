@@ -1,0 +1,59 @@
+{
+  "name": "hasad-platform",
+  "version": "1.0.0",
+  "description": "منصة حصاد - InomTech AgriTech Platform للزراعة الذكية",
+  "author": "InomTech",
+  "license": "MIT",
+  "keywords": [
+    "agriculture",
+    "farming",
+    "agritech",
+    "angular",
+    "tailwindcss"
+  ],
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --open",
+    "start:port": "ng serve --port 4300",
+    "build": "ng build",
+    "build:prod": "ng build --configuration production",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
+    "lint": "ng lint",
+    "serve:prod": "ng serve --configuration production",
+    "analyze": "ng build --stats-json && webpack-bundle-analyzer dist/hasad-platform/stats.json"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^16.2.12",
+    "@angular/common": "^16.2.12",
+    "@angular/compiler": "^16.2.12",
+    "@angular/core": "^16.2.12",
+    "@angular/forms": "^16.2.12",
+    "@angular/platform-browser": "^16.2.12",
+    "@angular/platform-browser-dynamic": "^16.2.12",
+    "@angular/router": "^16.2.12",
+    "chart.js": "^4.4.0",
+    "ng2-charts": "^5.0.3",
+    "rxjs": "~7.8.1",
+    "tslib": "^2.6.2",
+    "zone.js": "~0.13.3"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^16.2.10",
+    "@angular/cli": "^16.2.10",
+    "@angular/compiler-cli": "^16.2.12",
+    "@types/jasmine": "~4.3.6",
+    "autoprefixer": "^10.4.16",
+    "jasmine-core": "~5.1.1",
+    "karma": "~6.4.2",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.1",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6",
+    "typescript": "~5.1.6"
+  }
+}

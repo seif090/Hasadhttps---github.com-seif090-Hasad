@@ -1,0 +1,277 @@
+<!-- صفحة التسجيل -->
+<div
+  class="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center p-4 py-12"
+>
+  <div class="max-w-2xl w-full">
+    <!-- البطاقة -->
+    <div class="bg-white rounded-2xl shadow-2xl p-8">
+      <!-- الشعار -->
+      <div class="text-center mb-8">
+        <div
+          class="inline-flex items-center justify-center w-16 h-16 bg-primary-600 rounded-2xl mb-4"
+        >
+          <span class="text-3xl text-white font-bold">ح</span>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">إنشاء حساب جديد</h1>
+        <p class="text-gray-600">انضم إلى منصة حصاد - InomTech</p>
+      </div>
+
+      <!-- النموذج -->
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <!-- رسالة الخطأ -->
+        <div
+          *ngIf="errorMessage"
+          class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg"
+        >
+          <p class="text-red-600 text-sm">{{ errorMessage }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- الاسم -->
+          <div>
+            <label class="label">الاسم الكامل</label>
+            <input
+              type="text"
+              formControlName="name"
+              class="input-field"
+              placeholder="أحمد محمد"
+              [class.border-red-500]="
+                hasError('name', 'required') || hasError('name', 'minlength')
+              "
+            />
+            <p
+              *ngIf="hasError('name', 'required')"
+              class="text-red-500 text-sm mt-1"
+            >
+              الاسم مطلوب
+            </p>
+            <p
+              *ngIf="hasError('name', 'minlength')"
+              class="text-red-500 text-sm mt-1"
+            >
+              الاسم يجب أن يكون 3 أحرف على الأقل
+            </p>
+          </div>
+
+          <!-- رقم الهاتف -->
+          <div>
+            <label class="label">رقم الهاتف</label>
+            <input
+              type="tel"
+              formControlName="phone"
+              class="input-field"
+              placeholder="01012345678"
+              [class.border-red-500]="
+                hasError('phone', 'required') || hasError('phone', 'pattern')
+              "
+            />
+            <p
+              *ngIf="hasError('phone', 'required')"
+              class="text-red-500 text-sm mt-1"
+            >
+              رقم الهاتف مطلوب
+            </p>
+            <p
+              *ngIf="hasError('phone', 'pattern')"
+              class="text-red-500 text-sm mt-1"
+            >
+              رقم الهاتف غير صحيح
+            </p>
+          </div>
+        </div>
+
+        <!-- البريد الإلكتروني -->
+        <div class="mt-4">
+          <label class="label">البريد الإلكتروني</label>
+          <input
+            type="email"
+            formControlName="email"
+            class="input-field"
+            placeholder="example@domain.com"
+            [class.border-red-500]="
+              hasError('email', 'required') || hasError('email', 'email')
+            "
+          />
+          <p
+            *ngIf="hasError('email', 'required')"
+            class="text-red-500 text-sm mt-1"
+          >
+            البريد الإلكتروني مطلوب
+          </p>
+          <p
+            *ngIf="hasError('email', 'email')"
+            class="text-red-500 text-sm mt-1"
+          >
+            البريد الإلكتروني غير صحيح
+          </p>
+        </div>
+
+        <!-- نوع الحساب -->
+        <div class="mt-4">
+          <label class="label">نوع الحساب</label>
+          <div class="grid grid-cols-2 gap-4">
+            <label
+              class="relative flex items-center p-4 border-2 rounded-lg cursor-pointer transition"
+              [class.border-primary-600]="
+                registerForm.get('role')?.value === 'farmer'
+              "
+              [class.bg-primary-50]="
+                registerForm.get('role')?.value === 'farmer'
+              "
+            >
+              <input
+                type="radio"
+                formControlName="role"
+                value="farmer"
+                class="sr-only"
+              />
+              <div class="flex items-center">
+                <span class="text-3xl ml-3">🌾</span>
+                <div>
+                  <p class="font-semibold text-gray-800">مزارع</p>
+                  <p class="text-xs text-gray-600">لديّ أراضٍ زراعية</p>
+                </div>
+              </div>
+            </label>
+
+            <label
+              class="relative flex items-center p-4 border-2 rounded-lg cursor-pointer transition"
+              [class.border-primary-600]="
+                registerForm.get('role')?.value === 'company'
+              "
+              [class.bg-primary-50]="
+                registerForm.get('role')?.value === 'company'
+              "
+            >
+              <input
+                type="radio"
+                formControlName="role"
+                value="company"
+                class="sr-only"
+              />
+              <div class="flex items-center">
+                <span class="text-3xl ml-3">🏢</span>
+                <div>
+                  <p class="font-semibold text-gray-800">شركة</p>
+                  <p class="text-xs text-gray-600">شركة زراعية</p>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- المحافظة (اختياري) -->
+        <div class="mt-4">
+          <label class="label">المحافظة (اختياري)</label>
+          <select formControlName="governorate" class="input-field">
+            <option value="">اختر المحافظة</option>
+            <option *ngFor="let gov of governorates" [value]="gov">
+              {{ gov }}
+            </option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <!-- كلمة المرور -->
+          <div>
+            <label class="label">كلمة المرور</label>
+            <input
+              type="password"
+              formControlName="password"
+              class="input-field"
+              placeholder="••••••••"
+              [class.border-red-500]="
+                hasError('password', 'required') ||
+                hasError('password', 'minlength')
+              "
+            />
+            <p
+              *ngIf="hasError('password', 'required')"
+              class="text-red-500 text-sm mt-1"
+            >
+              كلمة المرور مطلوبة
+            </p>
+            <p
+              *ngIf="hasError('password', 'minlength')"
+              class="text-red-500 text-sm mt-1"
+            >
+              كلمة المرور يجب أن تكون 6 أحرف على الأقل
+            </p>
+          </div>
+
+          <!-- تأكيد كلمة المرور -->
+          <div>
+            <label class="label">تأكيد كلمة المرور</label>
+            <input
+              type="password"
+              formControlName="confirmPassword"
+              class="input-field"
+              placeholder="••••••••"
+              [class.border-red-500]="
+                hasError('confirmPassword', 'required') || hasPasswordMismatch()
+              "
+            />
+            <p
+              *ngIf="hasError('confirmPassword', 'required')"
+              class="text-red-500 text-sm mt-1"
+            >
+              تأكيد كلمة المرور مطلوب
+            </p>
+            <p *ngIf="hasPasswordMismatch()" class="text-red-500 text-sm mt-1">
+              كلمتا المرور غير متطابقتين
+            </p>
+          </div>
+        </div>
+
+        <!-- زر التسجيل -->
+        <button
+          type="submit"
+          [disabled]="isLoading || registerForm.invalid"
+          class="w-full btn-primary mt-6"
+        >
+          <span *ngIf="!isLoading">إنشاء الحساب</span>
+          <span *ngIf="isLoading" class="flex items-center justify-center">
+            <svg
+              class="animate-spin h-5 w-5 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            جاري إنشاء الحساب...
+          </span>
+        </button>
+
+        <!-- رابط تسجيل الدخول -->
+        <div class="mt-6 text-center">
+          <p class="text-gray-600">
+            لديك حساب بالفعل؟
+            <a
+              routerLink="/auth/login"
+              class="text-primary-600 hover:text-primary-700 font-medium"
+            >
+              سجل دخولك
+            </a>
+          </p>
+        </div>
+      </form>
+    </div>
+
+    <!-- معلومات إضافية -->
+    <div class="text-center mt-6">
+      <p class="text-gray-600 text-sm">© 2025 InomTech. جميع الحقوق محفوظة.</p>
+    </div>
+  </div>
+</div>

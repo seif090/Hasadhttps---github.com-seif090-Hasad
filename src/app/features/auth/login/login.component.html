@@ -1,0 +1,148 @@
+<!-- صفحة تسجيل الدخول -->
+<div
+  class="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center p-4"
+>
+  <div class="max-w-md w-full">
+    <!-- البطاقة -->
+    <div class="bg-white rounded-2xl shadow-2xl p-8">
+      <!-- الشعار -->
+      <div class="text-center mb-8">
+        <div
+          class="inline-flex items-center justify-center w-16 h-16 bg-primary-600 rounded-2xl mb-4"
+        >
+          <span class="text-3xl text-white font-bold">ح</span>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">منصة حصاد</h1>
+        <p class="text-gray-600">InomTech - منصة الزراعة الذكية</p>
+      </div>
+
+      <!-- النموذج -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- رسالة الخطأ -->
+        <div
+          *ngIf="errorMessage"
+          class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg"
+        >
+          <p class="text-red-600 text-sm">{{ errorMessage }}</p>
+        </div>
+
+        <!-- البريد الإلكتروني -->
+        <div class="mb-4">
+          <label class="label">البريد الإلكتروني</label>
+          <input
+            type="email"
+            formControlName="email"
+            class="input-field"
+            placeholder="example@domain.com"
+            [class.border-red-500]="
+              hasError('email', 'required') || hasError('email', 'email')
+            "
+          />
+          <p
+            *ngIf="hasError('email', 'required')"
+            class="text-red-500 text-sm mt-1"
+          >
+            البريد الإلكتروني مطلوب
+          </p>
+          <p
+            *ngIf="hasError('email', 'email')"
+            class="text-red-500 text-sm mt-1"
+          >
+            البريد الإلكتروني غير صحيح
+          </p>
+        </div>
+
+        <!-- كلمة المرور -->
+        <div class="mb-6">
+          <label class="label">كلمة المرور</label>
+          <input
+            type="password"
+            formControlName="password"
+            class="input-field"
+            placeholder="••••••••"
+            [class.border-red-500]="
+              hasError('password', 'required') ||
+              hasError('password', 'minlength')
+            "
+          />
+          <p
+            *ngIf="hasError('password', 'required')"
+            class="text-red-500 text-sm mt-1"
+          >
+            كلمة المرور مطلوبة
+          </p>
+          <p
+            *ngIf="hasError('password', 'minlength')"
+            class="text-red-500 text-sm mt-1"
+          >
+            كلمة المرور يجب أن تكون 6 أحرف على الأقل
+          </p>
+        </div>
+
+        <!-- زر تسجيل الدخول -->
+        <button
+          type="submit"
+          [disabled]="isLoading || loginForm.invalid"
+          class="w-full btn-primary"
+        >
+          <span *ngIf="!isLoading">تسجيل الدخول</span>
+          <span *ngIf="isLoading" class="flex items-center justify-center">
+            <svg
+              class="animate-spin h-5 w-5 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            جاري تسجيل الدخول...
+          </span>
+        </button>
+
+        <!-- رابط التسجيل -->
+        <div class="mt-6 text-center">
+          <p class="text-gray-600">
+            ليس لديك حساب؟
+            <a
+              routerLink="/auth/register"
+              class="text-primary-600 hover:text-primary-700 font-medium"
+            >
+              سجل الآن
+            </a>
+          </p>
+        </div>
+      </form>
+
+      <!-- حسابات تجريبية -->
+      <div class="mt-8 pt-6 border-t border-gray-200">
+        <p class="text-sm text-gray-500 text-center mb-3">حسابات تجريبية:</p>
+        <div class="space-y-2 text-xs text-gray-600">
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="font-semibold">مزارع:</p>
+            <p>farmer@hasad.com / 123456</p>
+          </div>
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="font-semibold">شركة:</p>
+            <p>company@hasad.com / 123456</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- معلومات إضافية -->
+    <div class="text-center mt-6">
+      <p class="text-gray-600 text-sm">© 2025 InomTech. جميع الحقوق محفوظة.</p>
+    </div>
+  </div>
+</div>

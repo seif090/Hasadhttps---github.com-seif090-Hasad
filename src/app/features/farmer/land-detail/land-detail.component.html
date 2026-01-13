@@ -1,0 +1,291 @@
+<!-- صفحة تفاصيل الأرض -->
+<div class="flex min-h-screen bg-gray-50">
+  <app-sidebar></app-sidebar>
+
+  <div class="flex-1 mr-64">
+    <app-topbar></app-topbar>
+
+    <main class="p-6">
+      <!-- Loader -->
+      <app-loader *ngIf="isLoading"></app-loader>
+
+      <!-- المحتوى -->
+      <div *ngIf="!isLoading && land">
+        <!-- العودة -->
+        <button
+          routerLink="/farmer/lands"
+          class="mb-4 flex items-center gap-2 text-gray-600 hover:text-primary-600 transition"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          <span>العودة للأراضي</span>
+        </button>
+
+        <!-- معلومات الأرض الأساسية -->
+        <div class="card mb-6">
+          <div class="flex items-start justify-between mb-6">
+            <div>
+              <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                أرض {{ land.location.village }}
+              </h1>
+              <p class="text-gray-600">
+                {{ land.location.governorate }} - {{ land.location.district }}
+              </p>
+            </div>
+            <app-badge [variant]="'success'">{{ land.status }}</app-badge>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div>
+              <p class="text-sm text-gray-600 mb-1">المساحة</p>
+              <p class="text-2xl font-bold text-gray-800">
+                {{ land.area }} فدان
+              </p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600 mb-1">نوع التربة</p>
+              <p class="text-xl font-semibold text-gray-800">
+                {{ land.soilType }}
+              </p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600 mb-1">نظام الري</p>
+              <p class="text-xl font-semibold text-gray-800">
+                {{ land.irrigationType }}
+              </p>
+            </div>
+            <div *ngIf="land.currentCrop">
+              <p class="text-sm text-gray-600 mb-1">المحصول الحالي</p>
+              <p class="text-xl font-semibold text-gray-800">
+                {{ land.currentCrop }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- التبويبات -->
+        <div class="mb-6">
+          <div class="border-b border-gray-200">
+            <nav class="flex gap-6">
+              <button
+                (click)="setActiveTab('details')"
+                [class.text-primary-600]="activeTab === 'details'"
+                [class.border-primary-600]="activeTab === 'details'"
+                [class.text-gray-600]="activeTab !== 'details'"
+                class="pb-3 border-b-2 font-medium transition"
+              >
+                التفاصيل
+              </button>
+              <button
+                (click)="setActiveTab('crops')"
+                [class.text-primary-600]="activeTab === 'crops'"
+                [class.border-primary-600]="activeTab === 'crops'"
+                [class.text-gray-600]="activeTab !== 'crops'"
+                class="pb-3 border-b-2 font-medium transition"
+              >
+                الدورات الزراعية ({{ cropCycles.length }})
+              </button>
+              <button
+                (click)="setActiveTab('harvests')"
+                [class.text-primary-600]="activeTab === 'harvests'"
+                [class.border-primary-600]="activeTab === 'harvests'"
+                [class.text-gray-600]="activeTab !== 'harvests'"
+                class="pb-3 border-b-2 font-medium transition"
+              >
+                الحصاد ({{ harvests.length }})
+              </button>
+              <button
+                (click)="setActiveTab('contracts')"
+                [class.text-primary-600]="activeTab === 'contracts'"
+                [class.border-primary-600]="activeTab === 'contracts'"
+                [class.text-gray-600]="activeTab !== 'contracts'"
+                class="pb-3 border-b-2 font-medium transition"
+              >
+                العقود ({{ land.contracts.length }})
+              </button>
+            </nav>
+          </div>
+        </div>
+
+        <!-- محتوى التبويبات -->
+        <div>
+          <!-- تبويب التفاصيل -->
+          <div *ngIf="activeTab === 'details'">
+            <div class="card">
+              <h3 class="text-xl font-bold text-gray-800 mb-4">
+                معلومات مفصلة
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                  <div>
+                    <p class="text-sm text-gray-600 mb-1">المحافظة</p>
+                    <p class="text-lg font-semibold text-gray-800">
+                      {{ land.location.governorate }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-600 mb-1">المركز</p>
+                    <p class="text-lg font-semibold text-gray-800">
+                      {{ land.location.district }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-600 mb-1">القرية</p>
+                    <p class="text-lg font-semibold text-gray-800">
+                      {{ land.location.village }}
+                    </p>
+                  </div>
+                </div>
+                <div class="space-y-4">
+                  <div>
+                    <p class="text-sm text-gray-600 mb-1">تاريخ الإضافة</p>
+                    <p class="text-lg font-semibold text-gray-800">
+                      {{ land.createdAt | date : "dd/MM/yyyy" }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-600 mb-1">آخر تحديث</p>
+                    <p class="text-lg font-semibold text-gray-800">
+                      {{ land.updatedAt | date : "dd/MM/yyyy" }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- تبويب الدورات الزراعية -->
+          <div *ngIf="activeTab === 'crops'">
+            <div *ngIf="cropCycles.length === 0" class="card text-center py-12">
+              <span class="text-6xl mb-4 block">🌱</span>
+              <h3 class="text-xl font-semibold text-gray-800 mb-2">
+                لا توجد دورات زراعية
+              </h3>
+            </div>
+
+            <div *ngIf="cropCycles.length > 0" class="space-y-4">
+              <div *ngFor="let cycle of cropCycles" class="card">
+                <div class="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 class="text-lg font-bold text-gray-800">
+                      {{ cycle.cropType }}
+                    </h3>
+                    <p class="text-sm text-gray-600">موسم {{ cycle.season }}</p>
+                  </div>
+                  <app-badge [variant]="getCycleStatusColor(cycle.status)">
+                    {{ cycle.status }}
+                  </app-badge>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <p class="text-gray-600">تاريخ الزراعة</p>
+                    <p class="font-semibold">
+                      {{ cycle.plantingDate | date : "dd/MM/yyyy" }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-gray-600">الحصاد المتوقع</p>
+                    <p class="font-semibold">
+                      {{ cycle.expectedHarvestDate | date : "dd/MM/yyyy" }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-gray-600">الإنتاج المتوقع</p>
+                    <p class="font-semibold">{{ cycle.expectedYield }} طن</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-600">التكاليف</p>
+                    <p class="font-semibold">{{ cycle.expenses }} جنيه</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- تبويب الحصاد -->
+          <div *ngIf="activeTab === 'harvests'">
+            <div *ngIf="harvests.length === 0" class="card text-center py-12">
+              <span class="text-6xl mb-4 block">🌾</span>
+              <h3 class="text-xl font-semibold text-gray-800 mb-2">
+                لا يوجد سجل حصاد
+              </h3>
+            </div>
+
+            <div *ngIf="harvests.length > 0" class="space-y-4">
+              <div *ngFor="let harvest of harvests" class="card">
+                <div class="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 class="text-lg font-bold text-gray-800">
+                      {{ harvest.date | date : "dd/MM/yyyy" }}
+                    </h3>
+                    <p class="text-sm text-gray-600">
+                      الكمية: {{ harvest.quantity }} طن
+                    </p>
+                  </div>
+                  <app-badge [variant]="getQualityColor(harvest.quality)">
+                    جودة {{ harvest.quality }}
+                  </app-badge>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <p class="text-gray-600">السعر/طن</p>
+                    <p class="font-semibold">{{ harvest.price }} جنيه</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-600">الإجمالي</p>
+                    <p class="font-semibold text-green-600">
+                      {{ harvest.totalRevenue }} جنيه
+                    </p>
+                  </div>
+                  <div *ngIf="harvest.buyer">
+                    <p class="text-gray-600">المشتري</p>
+                    <p class="font-semibold">{{ harvest.buyer }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- تبويب العقود -->
+          <div *ngIf="activeTab === 'contracts'">
+            <div
+              *ngIf="land.contracts.length === 0"
+              class="card text-center py-12"
+            >
+              <span class="text-6xl mb-4 block">📄</span>
+              <h3 class="text-xl font-semibold text-gray-800 mb-2">
+                لا توجد عقود
+              </h3>
+            </div>
+
+            <div *ngIf="land.contracts.length > 0" class="space-y-4">
+              <div class="card">
+                <p class="text-gray-600">
+                  عدد العقود المرتبطة بهذه الأرض:
+                  <strong>{{ land.contracts.length }}</strong>
+                </p>
+                <a
+                  routerLink="/contracts"
+                  class="text-primary-600 hover:text-primary-700 font-medium mt-2 inline-block"
+                >
+                  عرض جميع العقود ←
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

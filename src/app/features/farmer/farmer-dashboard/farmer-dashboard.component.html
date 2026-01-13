@@ -1,0 +1,216 @@
+<!-- لوحة تحكم المزارع -->
+<div class="flex min-h-screen bg-gray-50">
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <!-- المحتوى الرئيسي -->
+  <div class="flex-1 mr-64">
+    <!-- Topbar -->
+    <app-topbar></app-topbar>
+
+    <!-- محتوى الصفحة -->
+    <main class="p-6">
+      <!-- رسالة الترحيب -->
+      <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">
+          مرحباً، {{ currentUser?.name }} 👋
+        </h1>
+        <p class="text-gray-600 mt-1">إليك نظرة عامة على أراضيك وعقودك</p>
+      </div>
+
+      <!-- Loader -->
+      <app-loader *ngIf="isLoading"></app-loader>
+
+      <!-- المحتوى -->
+      <div *ngIf="!isLoading">
+        <!-- بطاقات الإحصائيات -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <!-- إجمالي الأراضي -->
+          <div class="card hover:shadow-lg transition">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-600 text-sm mb-1">إجمالي الأراضي</p>
+                <p class="text-3xl font-bold text-gray-800">
+                  {{ stats.totalLands || 0 }}
+                </p>
+                <p class="text-sm text-gray-500 mt-1">أرض زراعية</p>
+              </div>
+              <div
+                class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center"
+              >
+                <span class="text-3xl">🌾</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- المساحة الكلية -->
+          <div class="card hover:shadow-lg transition">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-600 text-sm mb-1">المساحة الكلية</p>
+                <p class="text-3xl font-bold text-gray-800">
+                  {{ stats.totalArea || 0 }}
+                </p>
+                <p class="text-sm text-gray-500 mt-1">فدان</p>
+              </div>
+              <div
+                class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center"
+              >
+                <span class="text-3xl">📐</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- الأراضي النشطة -->
+          <div class="card hover:shadow-lg transition">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-600 text-sm mb-1">الأراضي النشطة</p>
+                <p class="text-3xl font-bold text-gray-800">
+                  {{ stats.activeLands || 0 }}
+                </p>
+                <p class="text-sm text-gray-500 mt-1">قيد الزراعة/مؤجرة</p>
+              </div>
+              <div
+                class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center"
+              >
+                <span class="text-3xl">✅</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- الأراضي المتاحة -->
+          <div class="card hover:shadow-lg transition">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-600 text-sm mb-1">الأراضي المتاحة</p>
+                <p class="text-3xl font-bold text-gray-800">
+                  {{ stats.availableLands || 0 }}
+                </p>
+                <p class="text-sm text-gray-500 mt-1">جاهزة للاستخدام</p>
+              </div>
+              <div
+                class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center"
+              >
+                <span class="text-3xl">🆓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- قائمة الأراضي -->
+          <div class="card">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-bold text-gray-800">أراضيي</h2>
+              <a
+                routerLink="/farmer/lands"
+                class="text-primary-600 hover:text-primary-700 text-sm font-medium"
+              >
+                عرض الكل ←
+              </a>
+            </div>
+
+            <div
+              *ngIf="lands.length === 0"
+              class="text-center py-8 text-gray-500"
+            >
+              لا توجد أراضٍ مسجلة
+            </div>
+
+            <div *ngIf="lands.length > 0" class="space-y-3">
+              <div
+                *ngFor="let land of lands.slice(0, 3)"
+                class="p-4 border border-gray-200 rounded-lg hover:border-primary-300 hover:shadow-sm transition cursor-pointer"
+                [routerLink]="['/farmer/lands', land.id]"
+              >
+                <div class="flex items-start justify-between mb-2">
+                  <div>
+                    <h3 class="font-semibold text-gray-800">
+                      أرض {{ land.location.village }}
+                    </h3>
+                    <p class="text-sm text-gray-600">
+                      {{ land.location.governorate }} -
+                      {{ land.location.district }}
+                    </p>
+                  </div>
+                  <app-badge [variant]="getLandStatusColor(land.status)">
+                    {{ land.status }}
+                  </app-badge>
+                </div>
+                <div class="flex items-center gap-4 text-sm text-gray-600">
+                  <span>📐 {{ land.area }} فدان</span>
+                  <span>🌱 {{ land.soilType }}</span>
+                  <span *ngIf="land.currentCrop"
+                    >🌾 {{ land.currentCrop }}</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- قائمة العقود -->
+          <div class="card">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-bold text-gray-800">عقودي</h2>
+              <a
+                routerLink="/contracts"
+                class="text-primary-600 hover:text-primary-700 text-sm font-medium"
+              >
+                عرض الكل ←
+              </a>
+            </div>
+
+            <div
+              *ngIf="contracts.length === 0"
+              class="text-center py-8 text-gray-500"
+            >
+              لا توجد عقود
+            </div>
+
+            <div *ngIf="contracts.length > 0" class="space-y-3">
+              <div
+                *ngFor="let contract of contracts.slice(0, 3)"
+                class="p-4 border border-gray-200 rounded-lg hover:border-primary-300 hover:shadow-sm transition cursor-pointer"
+                routerLink="/contracts"
+              >
+                <div class="flex items-start justify-between mb-2">
+                  <div>
+                    <h3 class="font-semibold text-gray-800">
+                      {{ contract.companyName }}
+                    </h3>
+                    <p class="text-sm text-gray-600">{{ contract.type }}</p>
+                  </div>
+                  <app-badge
+                    [variant]="getContractStatusColor(contract.status)"
+                  >
+                    {{ contract.status }}
+                  </app-badge>
+                </div>
+                <div class="flex items-center gap-4 text-sm text-gray-600">
+                  <span>💰 {{ contract.terms.totalAmount }} جنيه</span>
+                  <span>📅 {{ contract.startDate | date : "dd/MM/yyyy" }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- نصائح وإرشادات -->
+        <div class="card mt-6 bg-gradient-to-r from-primary-50 to-green-50">
+          <div class="flex items-start gap-4">
+            <span class="text-4xl">💡</span>
+            <div>
+              <h3 class="font-bold text-gray-800 mb-2">نصائح زراعية</h3>
+              <p class="text-gray-700 text-sm">
+                مع اقتراب موسم الزراعة الصيفي، ننصح بتجهيز الأراضي مبكراً
+                واختيار المحاصيل المناسبة للطقس والتربة. تواصل مع خبرائنا للحصول
+                على استشارات زراعية مجانية.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
